@@ -1,4 +1,3 @@
-// src/components/layout/navbar.tsx
 import { Button } from "@/components/ui/button"
 
 export default function Navbar() {

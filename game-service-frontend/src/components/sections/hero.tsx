@@ -1,11 +1,10 @@
-// src/components/sections/hero.tsx
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 
 export default function Hero() {
   return (
     <section className="text-center py-20 px-6">
       <h1 className="text-5xl font-bold mb-6">
-        Top Up & GTA V Services Platform
+        GTA V Services Websites, Top Up (Coming Soon)
       </h1>
 
       <p className="text-gray-600 mb-6 max-w-xl mx-auto">
@@ -13,12 +12,12 @@ export default function Hero() {
         and top up your favorite games instantly.
       </p>
 
-      <div className="flex justify-center gap-4">
+      {/* <div className="flex justify-center gap-4">
         <Button size="lg">Get Started</Button>
         <Button variant="outline" size="lg">
           View Services
         </Button>
-      </div>
+      </div> */}
     </section>
   )
 }

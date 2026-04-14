@@ -9,9 +9,9 @@ export default function FeaturedGames() {
       </h2>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-6">GTA V Online</Card>
+        <Card className="p-6">GTA V Online Enhanced & Legacy</Card>
         <Card className="p-6">Mobile Legends</Card>
-        <Card className="p-6">PUBG Mobile</Card>
+        <Card className="p-6">PUBG Mobile</Card> *
       </div>
     </section>
   )
