@@ -2,13 +2,19 @@ import { Button } from "@/components/ui/button"
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between px-6 py-4 border-b">
-      <h1 className="text-xl font-bold">LootFlow</h1>
+    <nav className="flex items-center justify-between px-6 py-4 border-b bg-black text-white">
 
-      <div className="flex gap-4">
-        <Button variant="ghost">Login</Button>
-        <Button>Register</Button>
+      <h1 className="text-lg font-bold">HyperIndo</h1>
+
+      <div className="flex items-center gap-3">
+        <Button variant="outline" className="text-white border-white">
+          Lacak Order
+        </Button>
+
+        <Button className="bg-white text-black hover:bg-gray-200">
+          Order Sekarang
+        </Button>
       </div>
     </nav>
-  )
+  );
 }

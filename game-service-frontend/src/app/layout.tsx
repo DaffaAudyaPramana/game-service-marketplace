@@ -16,7 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "NexusTop",
+  title: "HyperIndo",
   description: "Game Service Marketplace",
 };
 
