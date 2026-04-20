@@ -1,10 +1,7 @@
-// src/lib/gta-service-detail.ts
-
 interface ServiceItem {
   label: string;
   price: string;
   result?: string; // opsional, tidak semua item punya result
-  category?: string;
 }
 
 interface ServiceDetail {

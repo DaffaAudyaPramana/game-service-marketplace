@@ -1,4 +1,3 @@
-// src/components/sections/featured-games.tsx
 import { Card } from "@/components/ui/card"
 
 export default function FeaturedGames() {

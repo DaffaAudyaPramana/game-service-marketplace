@@ -1,4 +1,3 @@
-// src/components/sections/how-it-works.tsx
 export default function HowItWorks() {
   return (
     <section className="py-16 px-6 bg-gray-50">
