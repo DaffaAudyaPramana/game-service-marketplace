@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 // import Link from "next/link";
 
 export default function Hero() {
@@ -17,9 +17,9 @@ export default function Hero() {
 
         {/* TITLE */}
         <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-          Jasa GTA V{" "}
-          <span className="text-lime-400">Online</span>{" "}
-          <span className="text-gray-400">Terpercaya</span>
+          JOKI GTA V{" "}
+          <span className="text-lime-400">ONLINE</span>{" "}
+          {/* <span className="text-gray-400">TERPERCAYA</span> */}
         </h1>
 
         {/* DESC */}
@@ -29,7 +29,7 @@ export default function Hero() {
         </p>
 
         {/* CTA */}
-        <div className="flex justify-center gap-4">
+        {/* <div className="flex justify-center gap-4">
           <Button className="bg-white text-black hover:bg-gray-200">
             Lihat Semua Layanan
           </Button>
@@ -37,7 +37,7 @@ export default function Hero() {
           <Button variant="outline" className="border-white text-white">
             Cara Kerja
           </Button>
-        </div>
+        </div> */}
 
       </div>
 

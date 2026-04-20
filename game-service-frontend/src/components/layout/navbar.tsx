@@ -4,7 +4,7 @@ export default function Navbar() {
   return (
     <nav className="flex items-center justify-between px-6 py-4 border-b bg-black text-white">
 
-      <h1 className="text-lg font-bold">HyperIndo</h1>
+      <h1 className="text-lg font-bold">HyperIndoStore</h1>
 
       <div className="flex items-center gap-3">
         <Button variant="outline" className="text-white border-white">
