@@ -1,8 +1,6 @@
-// src/app/games/gta-v/services/[slug]/page.tsx
-
 import { gtaServiceDetail } from "@/lib/gta-service-detail";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import TermsDialog from "@/components/custom/terms-dialog"; // ✅ PAKAI INI
 
 interface Props {
   params: {
@@ -11,13 +9,13 @@ interface Props {
 }
 
 export default function ServiceDetailPage({ params }: Props) {
-  const data = gtaServiceDetail[params.slug as keyof typeof gtaServiceDetail];
+  const data =
+    gtaServiceDetail[params.slug as keyof typeof gtaServiceDetail];
 
   if (!data) return notFound();
 
   return (
     <main className="bg-black text-white min-h-screen px-6 py-12">
-
       <div className="max-w-4xl mx-auto">
 
         {/* HEADER */}
@@ -37,8 +35,11 @@ export default function ServiceDetailPage({ params }: Props) {
               key={i}
               className="p-5 border border-white/10 rounded-xl flex justify-between items-center hover:border-lime-400 transition"
             >
+              {/* LEFT */}
               <div>
-                <p className="font-semibold">{item.label}</p>
+                <p className="font-semibold">
+                  {item.label}
+                </p>
 
                 {item.result && (
                   <p className="text-gray-400 text-sm">
@@ -47,14 +48,19 @@ export default function ServiceDetailPage({ params }: Props) {
                 )}
               </div>
 
+              {/* RIGHT */}
               <div className="flex items-center gap-4">
                 <p className="text-lime-400 font-bold">
                   {item.price}
                 </p>
 
-                <Button className="bg-lime-400 text-black">
-                  Order
-                </Button>
+                {/* 🔥 GANTI TOTAL: BUTTON → TERMS DIALOG */}
+                <TermsDialog
+                  service={params.slug}
+                  item={item.label}
+                  price={item.price}
+                />
+
               </div>
             </div>
           ))}
