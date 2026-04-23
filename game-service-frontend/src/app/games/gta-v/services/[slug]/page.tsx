@@ -1,6 +1,7 @@
 import { gtaServiceDetail } from "@/lib/gta-service-detail";
 import { notFound } from "next/navigation";
-import TermsDialog from "@/components/custom/terms-dialog"; // ✅ PAKAI INI
+import TermsDialog from "@/components/custom/terms-dialog";
+import Link from "next/link";
 
 interface Props {
   params: {
@@ -17,6 +18,14 @@ export default function ServiceDetailPage({ params }: Props) {
   return (
     <main className="bg-black text-white min-h-screen px-6 py-12">
       <div className="max-w-4xl mx-auto">
+
+        {/* 🔙 BACK */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-lime-400 mb-6 transition"
+        >
+          ← Kembali ke Beranda
+        </Link>
 
         {/* HEADER */}
         <h1 className="text-3xl font-bold mb-4">
@@ -35,11 +44,8 @@ export default function ServiceDetailPage({ params }: Props) {
               key={i}
               className="p-5 border border-white/10 rounded-xl flex justify-between items-center hover:border-lime-400 transition"
             >
-              {/* LEFT */}
               <div>
-                <p className="font-semibold">
-                  {item.label}
-                </p>
+                <p className="font-semibold">{item.label}</p>
 
                 {item.result && (
                   <p className="text-gray-400 text-sm">
@@ -48,25 +54,21 @@ export default function ServiceDetailPage({ params }: Props) {
                 )}
               </div>
 
-              {/* RIGHT */}
               <div className="flex items-center gap-4">
                 <p className="text-lime-400 font-bold">
                   {item.price}
                 </p>
 
-                {/* 🔥 GANTI TOTAL: BUTTON → TERMS DIALOG */}
                 <TermsDialog
                   service={params.slug}
                   item={item.label}
                   price={item.price}
                 />
-
               </div>
             </div>
           ))}
 
         </div>
-
       </div>
     </main>
   );

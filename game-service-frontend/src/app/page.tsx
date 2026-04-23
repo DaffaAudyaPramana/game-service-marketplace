@@ -1,4 +1,4 @@
-import Navbar from "@/components/layout/navbar"
+// import Navbar from "@/components/layout/navbar"
 import Hero from "@/components/sections/hero"
 // import FeaturedGames from "@/components/sections/featured-games"
 // import HowItWorks from "@/components/sections/how-it-works"
@@ -9,7 +9,7 @@ import GTAServicesSection from "@/components/sections/gtaservices"
 export default function Home() {
   return (
     <main>
-      <Navbar/>
+      {/* <Navbar/> */}
       <Hero/>
       {/* <FeaturedGames/> */}
       {/* <HowItWorks/> */}
