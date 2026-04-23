@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Navbar from "@/components/layout/navbar"; // ✅ TAMBAH
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,19 +17,27 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "HyperIndo",
+  title: "HyperIndoStore",
   description: "Game Service Marketplace",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="id" className={cn(geistSans.variable, geistMono.variable)}>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased bg-black text-white">
+
+        {/* ✅ GLOBAL NAVBAR */}
+        <Navbar />
+
+        {/* ✅ CONTENT */}
+        <main className="pt-20">
+          {children}
+        </main>
+
       </body>
     </html>
   );
