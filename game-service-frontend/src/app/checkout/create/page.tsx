@@ -3,10 +3,11 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
   const params = useSearchParams();
-
+  const router = useRouter();
   const service = params.get("service") || "";
   const item = params.get("item") || "";
   const price = params.get("price") || "";
@@ -22,65 +23,58 @@ export default function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
+const handleSubmit = async () => {
+  try {
+    setLoading(true);
 
-      if (!form.name || !form.rockstarId) {
-        alert("Nama & ID Rockstar wajib diisi!");
-        return;
-      }
-
-      const numericPrice = Number(price.replace(/\D/g, ""));
-
-      const res = await fetch("http://localhost:5000/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId: 1,
-          totalPrice: numericPrice,
-
-          //mapping baru
-          name: form.name,
-          method: form.method,
-          platform: form.platform,
-          version: form.version,
-          gameUserId: form.rockstarId,
-          notes: form.notes,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Gagal create order");
-      }
-
-      alert("Order berhasil dibuat!");
-
-      setForm({
-        name: "",
-        method: "login",
-        platform: "steam",
-        version: "legacy",
-        rockstarId: "",
-        notes: "",
-      });
-
-    } catch (err: unknown) {
-      console.error(err);
-
-      if (err instanceof Error) {
-        alert(err.message);
-      } else {
-        alert("Terjadi kesalahan");
-      }
-    } finally {
-      setLoading(false);
+    if (!form.name || !form.rockstarId) {
+      alert("Nama & ID Rockstar wajib diisi!");
+      return;
     }
-  };
+
+    const numericPrice = Number(price.replace(/\D/g, ""));
+
+    const res = await fetch("http://localhost:5000/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: 1,
+        totalPrice: numericPrice,
+
+        name: form.name,
+        method: form.method,
+        platform: form.platform,
+        version: form.version,
+        gameUserId: form.rockstarId,
+        notes: form.notes,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Gagal create order");
+    }
+
+    const orderId = data.data.order.orderId;
+
+    // 🔥 REDIRECT KE SUCCESS PAGE
+    router.push(`/checkout/success?orderId=${orderId}`);
+
+  } catch (err: unknown) {
+    console.error(err);
+
+    if (err instanceof Error) {
+      alert(err.message);
+    } else {
+      alert("Terjadi kesalahan");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <main className="bg-black text-white min-h-screen px-6 py-12">
