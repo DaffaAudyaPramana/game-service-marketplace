@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 export default function SuccessPage() {
   const params = useSearchParams();
   const orderId = params.get("orderId");
+  const price = params.get("price");
 
   return (
     <main className="bg-black text-white min-h-screen px-6 py-12">
@@ -24,6 +25,14 @@ export default function SuccessPage() {
           <p className="text-gray-400 mb-2">Order ID</p>
           <p className="text-xl font-bold text-lime-400">
             {orderId}
+          </p>
+
+          <p className="mt-3 text-gray-400 text-sm">
+            Total Pembayaran
+          </p>
+
+          <p className="text-lg font-semibold text-white">
+            Rp {price ? Number(price).toLocaleString("id-ID") : "-"}
           </p>
         </div>
 
