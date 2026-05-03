@@ -59,9 +59,10 @@ const handleSubmit = async () => {
     }
 
     const orderId = data.data.order.orderId;
+    // const totalPrice = data.data.order.totalPrice;
 
     // 🔥 REDIRECT KE SUCCESS PAGE
-    router.push(`/checkout/success?orderId=${orderId}`);
+    router.push(`/checkout/success/${orderId}`);
 
   } catch (err: unknown) {
     console.error(err);
