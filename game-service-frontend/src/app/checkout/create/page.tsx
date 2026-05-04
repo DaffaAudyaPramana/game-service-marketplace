@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +22,21 @@ export default function CheckoutPage() {
   });
 
   const [loading, setLoading] = useState(false);
+
+const checkAuth = async () => {
+  const res = await fetch("http://localhost:5000/auth/me", {
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    router.push("/login");
+  }
+};
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  checkAuth();
+}, []);
 
 const handleSubmit = async () => {
   try {
