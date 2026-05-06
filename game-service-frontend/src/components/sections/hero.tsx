@@ -3,7 +3,7 @@
 
 export default function Hero() {
   return (
-    <section className="bg-black text-white py-24 px-6 text-center relative overflow-hidden">
+    <section className="bg-black text-white py-24 px-6 text-center relative">
 
       {/* GRID BACKGROUND */}
       <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:40px_40px]" />
