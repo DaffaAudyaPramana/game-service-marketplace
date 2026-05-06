@@ -11,25 +11,38 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  const handleLogin = async () => {
+const handleLogin = async () => {
+  try {
     const res = await fetch("http://localhost:5000/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // 🔥 COOKIE
-      body: JSON.stringify(form),
+
+      credentials: "include",
+
+      body: JSON.stringify({
+        email: form.email,
+        password: form.password,
+      }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.error);
+      alert(data.error || "Login gagal");
       return;
     }
 
+    alert("Login berhasil");
+
     router.push("/");
-  };
+
+  } catch (err) {
+    console.error(err);
+    alert("Terjadi kesalahan");
+  }
+};
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center">
