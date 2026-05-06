@@ -85,6 +85,7 @@ const handleSubmit = async () => {
     // const totalPrice = data.data.order.totalPrice;
 
     // 🔥 REDIRECT KE SUCCESS PAGE
+    localStorage.removeItem("pending_checkout");
     router.push(`/checkout/success/${orderId}`);
 
   } catch (err: unknown) {
