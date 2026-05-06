@@ -36,6 +36,22 @@ const handleLogin = async () => {
 
     alert("Login berhasil");
 
+    const pendingCheckout = localStorage.getItem(
+ "pending_checkout"
+    );
+
+    if (pendingCheckout) {
+      const data = JSON.parse(pendingCheckout);
+
+      router.push(
+        `/checkout/create?service=${data.service}&item=${encodeURIComponent(
+          data.item
+        )}&price=${encodeURIComponent(data.price)}`
+      );
+
+      return;
+    }
+
     router.push("/");
 
   } catch (err) {
