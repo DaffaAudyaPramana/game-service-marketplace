@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/layout/navbar"; // ✅ TAMBAH
+import Navbar from "@/components/layout/navbar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,14 +27,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={cn(geistSans.variable, geistMono.variable)}>
-      <body className="antialiased bg-black text-white">
+    <html
+      lang="id"
+      className={cn(
+        geistSans.variable,
+        geistMono.variable
+      )}
+    >
+      <body className="antialiased bg-black text-white overflow-x-hidden">
 
-        {/* ✅ GLOBAL NAVBAR */}
         <Navbar />
 
-        {/* ✅ CONTENT */}
-        <main className="pt-20">
+        <main className="pt-20 min-h-screen overflow-y-auto">
           {children}
         </main>
 
