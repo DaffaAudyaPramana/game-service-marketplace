@@ -17,9 +17,17 @@ export default function TermsDialog({ service, item, price }: Props) {
   const router = useRouter();
 
   // 🔒 SCROLL LOCK
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "auto";
-  }, [open]);
+    useEffect(() => {
+      if (open) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+
+      return () => {
+        document.body.style.overflow = "auto";
+      };
+    }, [open]);
 
   // ⌨️ ESC CLOSE
   useEffect(() => {
@@ -62,9 +70,23 @@ export default function TermsDialog({ service, item, price }: Props) {
   const handleContinue = () => {
     if (!agree) {
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+
       return;
     }
+
+    // 🔥 SIMPAN CHECKOUT TERAKHIR
+    localStorage.setItem(
+      "pending_checkout",
+      JSON.stringify({
+        service,
+        item,
+        price,
+      })
+    );
 
     router.push(
       `/checkout/create?service=${service}&item=${encodeURIComponent(
