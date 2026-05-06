@@ -23,20 +23,27 @@ export default function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
 
-const checkAuth = async () => {
-  const res = await fetch("http://localhost:5000/auth/me", {
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    router.push("/login");
-  }
-};
-
-// eslint-disable-next-line react-hooks/exhaustive-deps
 useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:5000/auth/me",
+        {
+          credentials: "include",
+        }
+      );
+
+      if (res.status === 401) {
+        router.push("/login");
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   checkAuth();
-}, []);
+}, [router]);
 
 const handleSubmit = async () => {
   try {
@@ -54,6 +61,7 @@ const handleSubmit = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         productId: 1,
         totalPrice: numericPrice,
