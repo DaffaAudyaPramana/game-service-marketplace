@@ -127,7 +127,7 @@ const handleSubmit = async () => {
           <div>
             <label className="text-sm text-gray-400">Nama</label>
             <input
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               value={form.name}
               onChange={(e) =>
                 setForm({ ...form, name: e.target.value })
@@ -141,14 +141,18 @@ const handleSubmit = async () => {
               Metode Pengerjaan
             </label>
             <select
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               value={form.method}
               onChange={(e) =>
                 setForm({ ...form, method: e.target.value })
               }
             >
-              <option value="login">Login</option>
-              <option value="invite">Invite Session</option>
+            <option className="bg-black text-white" value="login">
+              Via Login
+            </option>
+            <option className="bg-black text-white" value="invite">
+              Invite Session
+            </option>
             </select>
           </div>
 
@@ -158,14 +162,18 @@ const handleSubmit = async () => {
               Platform
             </label>
             <select
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               value={form.platform}
               onChange={(e) =>
                 setForm({ ...form, platform: e.target.value })
               }
             >
-              <option value="steam">Steam</option>
-              <option value="epic">Epic Games</option>
+              <option className="bg-black text-white" value="steam">
+                Steam
+                </option>
+              <option className="bg-black text-white" value="epic">
+                Epic Games
+                </option>
             </select>
           </div>
 
@@ -175,14 +183,18 @@ const handleSubmit = async () => {
               Versi GTA V
             </label>
             <select
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               value={form.version}
               onChange={(e) =>
                 setForm({ ...form, version: e.target.value })
               }
             >
-              <option value="legacy">Legacy</option>
-              <option value="enhanced">Enhanced</option>
+              <option className="bg-black text-white" value="legacy">
+                Legacy
+                </option>
+              <option className="bg-black text-white" value="enhanced">
+                Enhanced
+                </option>
             </select>
           </div>
 
@@ -192,7 +204,7 @@ const handleSubmit = async () => {
               ID Rockstar Games
             </label>
             <input
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               placeholder="Masukkan ID Rockstar"
               value={form.rockstarId}
               onChange={(e) =>
@@ -207,7 +219,7 @@ const handleSubmit = async () => {
               Request Tambahan
             </label>
             <textarea
-              className="w-full mt-1 p-3 rounded bg-white/5 border border-white/10"
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
               placeholder="Opsional..."
               value={form.notes}
               onChange={(e) =>
