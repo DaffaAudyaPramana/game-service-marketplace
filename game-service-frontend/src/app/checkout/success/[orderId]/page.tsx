@@ -116,10 +116,18 @@ const handleUpload = async () => {
 
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data.error);
+    if (!res.ok) {
+      throw new Error(data.error);
+    }
 
     alert("Upload berhasil!");
 
+    window.open(
+      "https://discord.gg/FJDVUdbE3b",
+      "_blank",
+      "noopener,noreferrer"
+    );
+    
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     alert(err.message);
@@ -167,11 +175,11 @@ const handleUpload = async () => {
       <div className="max-w-2xl mx-auto text-center">
 
         <h1 className="text-3xl font-bold mb-4 text-lime-400">
-          🎉 Order Berhasil!
+          Order Berhasil!
         </h1>
 
         <p className="text-gray-400 mb-8">
-          Simpan Order ID ini untuk tracking
+          Proses lebih lanjut akan diarahkan ke Server Discord kami
         </p>
 
         {/* ORDER INFO */}

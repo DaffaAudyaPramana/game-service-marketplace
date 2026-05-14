@@ -156,6 +156,12 @@ const handleSubmit = async () => {
             </select>
           </div>
 
+      {/* INFO */}
+        <div className="text-left mb-8 space-y-2 text-sm text-gray-300">
+          <p>• Jasa money heist bisa login/invite session.</p>
+          <p>• Jasa non-money wajib login.</p>
+        </div>
+
           {/* 3. PLATFORM */}
           <div>
             <label className="text-sm text-gray-400">
@@ -201,11 +207,11 @@ const handleSubmit = async () => {
           {/* 5. ROCKSTAR ID */}
           <div>
             <label className="text-sm text-gray-400">
-              ID Rockstar Games
+              Rockstar Games Username
             </label>
             <input
               className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
-              placeholder="Masukkan ID Rockstar"
+              placeholder="Masukkan Username Rockstar"
               value={form.rockstarId}
               onChange={(e) =>
                 setForm({ ...form, rockstarId: e.target.value })
