@@ -85,3 +85,7 @@
 .animate-modalOut {
   animation: modalOut 0.2s ease-in forwards;
 }
+
+html {
+  scroll-behavior: smooth;
+}
