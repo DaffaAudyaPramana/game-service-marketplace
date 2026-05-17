@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +15,19 @@ export default function LoginPage() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [notif, setNotif] = useState<{
+  type: "success" | "error";
+  message: string;
+  } | null>(null);
+
+  const showNotif = (type: "success" | "error", message: string) => {
+    setNotif({ type, message });
+
+    setTimeout(() => {
+      setNotif(null);
+    }, 3000);
+  };
 
   const handleLogin = async () => {
     try {
@@ -33,35 +46,74 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Login gagal");
+        showNotif("error", data.error || "Email atau password salah");
         return;
       }
 
-      alert("Login berhasil");
+      showNotif("success", "Login berhasil");
+
+      // kasih tahu navbar bahwa status login berubah
+      window.dispatchEvent(new Event("auth-change"));
 
       const pendingCheckout = localStorage.getItem("pending_checkout");
 
+    setTimeout(() => {
       if (pendingCheckout) {
-        const data = JSON.parse(pendingCheckout);
+        const checkoutData = JSON.parse(pendingCheckout);
 
         router.push(
-          `/checkout/create?service=${data.service}&item=${encodeURIComponent(
-            data.item
-          )}&price=${encodeURIComponent(data.price)}`
+          `/checkout/create?service=${checkoutData.service}&item=${encodeURIComponent(
+            checkoutData.item
+          )}&price=${encodeURIComponent(checkoutData.price)}`
         );
 
         return;
       }
 
       router.push("/");
-    } catch (err) {
-      console.error(err);
-      alert("Terjadi kesalahan");
-    }
-  };
+    }, 1200);
+  } catch (err) {
+    console.error(err);
+    showNotif("error", "Terjadi kesalahan, coba lagi nanti");
+  }
+};
 
   return (
     <main className="relative min-h-screen bg-black overflow-hidden">
+      {notif && (
+      <div className="fixed top-6 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div
+          className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-xl ${
+            notif.type === "success"
+              ? "border-lime-400/40 bg-lime-400/15 text-lime-300 shadow-lime-400/10"
+              : "border-red-400/40 bg-red-500/15 text-red-300 shadow-red-500/10"
+          }`}
+        >
+          <div
+            className={`mt-0.5 rounded-full p-1 ${
+              notif.type === "success"
+                ? "bg-lime-400/20"
+                : "bg-red-500/20"
+            }`}
+          >
+            {notif.type === "success" ? (
+              <CheckCircle size={20} />
+            ) : (
+              <XCircle size={20} />
+            )}
+          </div>
+
+          <div>
+            <p className="text-sm font-bold">
+              {notif.type === "success" ? "Berhasil" : "Login gagal"}
+            </p>
+            <p className="mt-1 text-sm text-white/80">
+              {notif.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
       <div className="absolute inset-0">
         <Image
           src="/gta-bg.png"
@@ -73,14 +125,6 @@ export default function LoginPage() {
       </div>
 
       <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
-
-      <header className="relative z-10 border-b border-white/10">
-        <div className="px-6 py-5">
-          <h1 className="text-white text-2xl font-bold tracking-wide">
-            HyperIndoStore
-          </h1>
-        </div>
-      </header>
 
       <div className="relative z-10 flex items-center justify-center px-6 py-16 min-h-[90vh]">
         <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
@@ -116,6 +160,13 @@ export default function LoginPage() {
                 Password
               </label>
 
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-lime-400 hover:underline"
+              >
+                Lupa password?
+              </Link>
+
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -135,6 +186,11 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+            </div>
+
+           {/* INFO */}
+            <div className="text-left mb-8 space-y-2 text-sm text-gray-300">
+              <p>• Login ini guna untuk mengirim order ke email anda.</p>
             </div>
 
             <button
