@@ -5,6 +5,8 @@ import Hero from "@/components/sections/hero"
 // import GTAVPage from "@/app/games/gta-v/page"
 // import ServiceCard from "@/components/custom/service-card"
 import GTAServicesSection from "@/components/sections/gtaservices"
+import TestimoniSection from "@/components/sections/testimoni-section"
+import FeedbackSection from "@/components/sections/feedback-section"
 
 export default function Home() {
   return (
@@ -16,6 +18,8 @@ export default function Home() {
       {/* <GTAVPage/> */}
       {/* <ServiceCard/> */}
       <GTAServicesSection/>
+      <TestimoniSection/>
+      <FeedbackSection/>
     </main>
   )
 }
