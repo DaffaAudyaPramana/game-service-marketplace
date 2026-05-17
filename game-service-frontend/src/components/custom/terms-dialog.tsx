@@ -11,12 +11,12 @@ interface Props {
 
 export default function TermsDialog({ service, item, price }: Props) {
   const [open, setOpen] = useState(false);
-  const [closing, setClosing] = useState(false); // 🎬 exit animation
+  const [closing, setClosing] = useState(false);
   const [agree, setAgree] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
 
-  // 🔒 SCROLL LOCK
+  // SCROLL LOCK
     useEffect(() => {
       if (open) {
         document.body.style.overflow = "hidden";
@@ -39,13 +39,13 @@ export default function TermsDialog({ service, item, price }: Props) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [open]);
 
-  // 💾 LOAD AGREEMENT
+  // RESET AGREEMENT EVERY LOAD PAGE SERVICES
   useEffect(() => {
-    const saved = localStorage.getItem("terms_accepted");
-    if (saved === "true") setAgree(true);
+    localStorage.removeItem("terms_accepted");
+    setAgree(false);
   }, []);
 
-  // 🔁 CLOSE WITH ANIMATION
+  // CLOSE WITH ANIMATION
   const handleClose = () => {
     setClosing(true);
     setTimeout(() => {
@@ -54,7 +54,7 @@ export default function TermsDialog({ service, item, price }: Props) {
     }, 200);
   };
 
-  // 🔁 TOGGLE CHECKBOX (FIX BUG)
+  // TOGGLE CHECKBOX
   const handleCheckbox = () => {
     const newValue = !agree;
     setAgree(newValue);
@@ -62,11 +62,11 @@ export default function TermsDialog({ service, item, price }: Props) {
     if (newValue) {
       localStorage.setItem("terms_accepted", "true");
     } else {
-      localStorage.removeItem("terms_accepted"); // ✅ bisa uncheck lagi
+      localStorage.removeItem("terms_accepted");
     }
   };
 
-  // 🚀 CONTINUE
+  // CONTINUE
   const handleContinue = () => {
     if (!agree) {
       setShowToast(true);
@@ -78,7 +78,7 @@ export default function TermsDialog({ service, item, price }: Props) {
       return;
     }
 
-    // 🔥 SIMPAN CHECKOUT TERAKHIR
+    // SIMPAN CHECKOUT TERAKHIR
     localStorage.setItem(
       "pending_checkout",
       JSON.stringify({
@@ -191,7 +191,7 @@ export default function TermsDialog({ service, item, price }: Props) {
               Batal
             </button>
 
-            {/* 🔔 TOAST */}
+            {/* TOAST */}
             {showToast && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg text-sm animate-fadeIn">
                 Harap centang persetujuan terlebih dahulu
