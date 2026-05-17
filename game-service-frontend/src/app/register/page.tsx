@@ -5,11 +5,14 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckCircle, XCircle } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
 
   const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -18,41 +21,90 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = async () => {
-    if (form.password !== form.confirmPassword) {
-      alert("Konfirmasi password tidak sama");
+const [notif, setNotif] = useState<{
+  type: "success" | "error";
+  message: string;
+} | null>(null);
+
+const showNotif = (type: "success" | "error", message: string) => {
+  setNotif({ type, message });
+
+  setTimeout(() => {
+    setNotif(null);
+  }, 3000);
+};
+
+const handleRegister = async () => {
+  if (
+    !form.firstName.trim() ||
+    !form.lastName.trim() ||
+    !form.email.trim () ||
+    !form.password  ||
+    !form.confirmPassword
+  ) {
+    showNotif("error", "Semua field wajib diisi");
+    return;
+  }
+
+  if (form.password !== form.confirmPassword) {
+    showNotif("error", "Konfirmasi password tidak sama");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showNotif("error", data.error || "Register gagal");
       return;
     }
 
-    try {
-      const res = await fetch("http://localhost:5000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      });
+    showNotif("success", "Register berhasil, silakan login");
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Register gagal");
-        return;
-      }
-
-      alert("Register berhasil, silakan login");
+    setTimeout(() => {
       router.push("/login");
-    } catch (err) {
-      console.error(err);
-      alert("Terjadi kesalahan");
-    }
-  };
+    }, 1200);
+  } catch (err) {
+    console.error(err);
+    showNotif("error", "Terjadi kesalahan");
+  }
+};
 
   return (
+    
     <main className="relative min-h-screen bg-black overflow-hidden">
+      {notif && (
+        <div className="fixed top-6 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div
+            className={`flex items-center gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-xl ${
+              notif.type === "success"
+                ? "border-lime-400/30 bg-lime-400/15 text-lime-300"
+                : "border-red-400/30 bg-red-400/15 text-red-300"
+            }`}
+          >
+            {notif.type === "success" ? (
+              <CheckCircle size={22} />
+            ) : (
+              <XCircle size={22} />
+            )}
+
+            <p className="text-sm font-medium">{notif.message}</p>
+          </div>
+        </div>
+      )}
       <div className="absolute inset-0">
         <Image
           src="/gta-bg.png"
@@ -65,14 +117,6 @@ export default function RegisterPage() {
 
       <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
 
-      <header className="relative z-10 border-b border-white/10">
-        <div className="px-6 py-5">
-          <h1 className="text-white text-2xl font-bold tracking-wide">
-            HyperIndoStore
-          </h1>
-        </div>
-      </header>
-
       <div className="relative z-10 flex items-center justify-center px-6 py-16 min-h-[90vh]">
         <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
           <div className="text-center mb-8">
@@ -81,11 +125,44 @@ export default function RegisterPage() {
             </h2>
 
             <p className="text-gray-400 text-sm leading-relaxed">
-              Buat akun untuk tracking orderan anda.
+              Buat akun di HyperIndoStore untuk akses order di web kami.
             </p>
           </div>
 
           <div className="space-y-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="text-sm text-gray-300 mb-2 block">
+                  Nama Depan
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Nama depan"
+                  value={form.firstName}
+                  onChange={(e) =>
+                    setForm({ ...form, firstName: e.target.value })
+                  }
+                  className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-lime-400 transition"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-300 mb-2 block">
+                  Nama Belakang
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Nama belakang"
+                  value={form.lastName}
+                  onChange={(e) =>
+                    setForm({ ...form, lastName: e.target.value })
+                  }
+                  className="w-full p-4 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-lime-400 transition"
+                />
+              </div>
+            </div>
             <div>
               <label className="text-sm text-gray-300 mb-2 block">
                 Email
