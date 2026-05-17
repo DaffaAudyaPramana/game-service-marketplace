@@ -22,7 +22,8 @@ export default function CheckoutPage() {
   });
 
   const [loading, setLoading] = useState(false);
-
+  const [processingDots, setProcessingDots] = useState(".");
+  
 useEffect(() => {
   const checkAuth = async () => {
     try {
@@ -45,11 +46,30 @@ useEffect(() => {
   checkAuth();
 }, [router]);
 
+  useEffect(() => {
+  if (!loading) {
+    setProcessingDots(".");
+    return;
+  }
+
+  const interval = setInterval(() => {
+    setProcessingDots((prev) => {
+      if (prev === "...") return ".";
+      return prev + ".";
+    });
+  }, 450);
+
+  return () => clearInterval(interval);
+}, [loading]);
+
 const handleSubmit = async () => {
   try {
     setLoading(true);
 
-    if (!form.name || !form.rockstarId) {
+    const customerName = form.name.trim();
+    const rockstarId = form.rockstarId.trim();
+
+    if (!customerName || !rockstarId) {
       alert("Nama & ID Rockstar wajib diisi!");
       return;
     }
@@ -66,11 +86,11 @@ const handleSubmit = async () => {
         productId: 1,
         totalPrice: numericPrice,
 
-        name: form.name,
+        name: customerName,
         method: form.method,
         platform: form.platform,
         version: form.version,
-        gameUserId: form.rockstarId,
+        gameUserId: rockstarId,
         notes: form.notes,
       }),
     });
@@ -235,11 +255,21 @@ const handleSubmit = async () => {
           </div>
 
           <Button
-            className="w-full bg-lime-400 text-black"
+            className="w-full bg-lime-400 text-black hover:bg-lime-300 disabled:cursor-not-allowed disabled:opacity-70"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Processing..." : "Submit Order"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-3">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+
+                <span className="min-w-[105px] text-left font-semibold">
+                  Processing{processingDots}
+                </span>
+              </span>
+            ) : (
+              "Submit Order"
+            )}
           </Button>
 
         </div>
