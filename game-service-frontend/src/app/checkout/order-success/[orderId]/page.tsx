@@ -89,7 +89,7 @@ export default function OrderSuccessPage() {
                     </div>
 
                     <h3 className="font-extrabold">
-                      Lanjut ke Discord
+                      Klik untuk lanjut ke Discord
                     </h3>
 
                     <p className="mt-2 text-sm leading-relaxed text-gray-300 group-hover:text-black/80">
@@ -116,7 +116,7 @@ export default function OrderSuccessPage() {
                     </div>
 
                     <h3 className="font-extrabold text-white">
-                      Lanjut ke WhatsApp
+                      Klik untuk lanjut ke WhatsApp
                     </h3>
 
                     <p className="mt-2 text-sm leading-relaxed text-gray-400">
