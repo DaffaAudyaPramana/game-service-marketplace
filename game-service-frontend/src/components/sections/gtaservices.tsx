@@ -35,9 +35,11 @@ export default function GTAServicesSection() {
   const router = useRouter();
 
   return (
-    <section className="bg-black text-white py-20 px-6">
-      <div className="max-w-6xl mx-auto">
-
+    <section 
+      id="layanan"
+      className="bg-black text-white py-20 px-6">
+      <div className="max-w-6xl mx-auto"
+    >
         {/* HEADER */}
         <div className="mb-12">
           <p className="text-lime-400 font-bold drop-shadow-[0_0_10px_rgba(163,230,53,0.5)]">
@@ -62,7 +64,7 @@ export default function GTAServicesSection() {
               {/* BADGE */}
               {item.highlight && (
                 <span className="text-xs bg-lime-400 text-black px-2 py-1 rounded mb-4 inline-block">
-                  🔥 Paling Laris
+                  🔥 Best Seller
                 </span>
               )}
 
