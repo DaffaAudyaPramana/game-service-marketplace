@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   UploadCloud,
   ImagePlus,
@@ -10,7 +10,6 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
-  ExternalLink,
 } from "lucide-react";
 
 type Order = {
@@ -29,6 +28,7 @@ type Order = {
 
 export default function SuccessPage() {
   const params = useParams();
+  const router = useRouter();
   const orderId = params.orderId as string;
 
   const [order, setOrder] = useState<Order | null>(null);
@@ -159,8 +159,13 @@ const handleUpload = async () => {
     }
 
     setUploaded(true);
-    showToast("success", "Upload berhasil! Silakan lanjut ke Discord atau ke Whatsapp.");
-  } catch (err: unknown) {
+    showToast(      "success",
+      "Upload berhasil! Mengarahkan ke halaman order berhasil..."
+    );
+
+    setTimeout(() => {
+      router.push(`/checkout/order-success/${orderId}`);
+    }, 1000);} catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "Terjadi kesalahan saat upload";
 
@@ -431,48 +436,6 @@ const handleUpload = async () => {
               </div>
             </div>
           )}
-        </div>
-      </div>
-    )}
-
-    {/* SUCCESS INFO */}
-    {uploaded && (
-      <div className="mt-5 rounded-2xl border border-lime-400/30 bg-lime-400/10 p-4 text-left">
-        <div className="flex gap-3">
-          <CheckCircle className="mt-0.5 shrink-0 text-lime-400" size={22} />
-
-          <div>
-            <p className="font-bold text-lime-300">
-              Bukti transfer berhasil diupload
-            </p>
-
-            <p className="mt-1 text-sm text-gray-300">
-              Silakan lanjut ke Discord untuk proses konfirmasi order.
-            </p>
-
-            <a
-              href="https://discord.gg/vB5bfRKFfH"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-lime-400 px-5 py-2 text-sm font-bold text-black transition hover:bg-lime-300"
-            >
-              Lanjut ke Discord
-              <ExternalLink size={16} />
-            </a>
-                        <p className="mt-1 text-sm text-gray-300">
-              Atau lanjut ke admin whatsapp kami untuk proses konfirmasi order.
-            </p>
-
-            <a
-              href="http://wa.me/6282227529815"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-lime-400 px-5 py-2 text-sm font-bold text-black transition hover:bg-lime-300"
-            >
-              Lanjut ke Whatsapp
-              <ExternalLink size={16} />
-            </a>
-          </div>
         </div>
       </div>
     )}
