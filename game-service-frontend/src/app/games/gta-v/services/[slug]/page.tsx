@@ -37,37 +37,70 @@ export default function ServiceDetailPage({ params }: Props) {
         </p>
 
         {/* LIST */}
-        <div className="grid gap-4">
+        <div className="grid gap-5">
+          {data.items.map((item, i) => {
+            const itemName = item.name || item.label || "";
+            const features = item.features || [];
 
-          {data.items.map((item, i) => (
-            <div
-              key={i}
-              className="p-5 border border-white/10 rounded-xl flex justify-between items-center hover:border-lime-400 transition"
-            >
-              <div>
-                <p className="font-semibold">{item.label}</p>
+            return (
+              <div
+                key={i}
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-lime-400/80 hover:bg-lime-400/[0.03]"
+              >
+                <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                  {/* LEFT CONTENT */}
+                  <div className="flex-1">
+                    <div className="mb-3 flex items-center gap-3">
+                      <div className="h-2 w-2 rounded-full bg-lime-400 shadow-[0_0_12px_rgba(163,230,53,0.8)]" />
 
-                {item.result && (
-                  <p className="text-gray-400 text-sm">
-                    Estimasi: {item.result}
-                  </p>
-                )}
+                      <h2 className="text-lg font-bold text-white">
+                        {itemName}
+                      </h2>
+                    </div>
+
+                    {features.length > 0 ? (
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {features.map((feature, index) => (
+                          <span
+                            key={index}
+                            className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs text-gray-300"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mb-3 text-sm font-semibold text-white">
+                        {item.label}
+                      </p>
+                    )}
+
+                    {item.result && (
+                      <p className="text-sm text-gray-400">
+                        Estimasi:{" "}
+                        <span className="text-gray-300">
+                          {item.result}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+
+                  {/* RIGHT CONTENT */}
+                  <div className="flex items-center justify-between gap-4 border-t border-white/10 pt-4 md:min-w-[190px] md:flex-col md:items-end md:border-t-0 md:pt-0">
+                    <p className="whitespace-nowrap text-xl font-extrabold text-lime-400 md:text-right">
+                      {item.price}
+                    </p>
+
+                    <TermsDialog
+                      service={params.slug}
+                      item={itemName}
+                      price={item.price}
+                    />
+                  </div>
+                </div>
               </div>
-
-              <div className="flex items-center gap-4">
-                <p className="text-lime-400 font-bold">
-                  {item.price}
-                </p>
-
-                <TermsDialog
-                  service={params.slug}
-                  item={item.label}
-                  price={item.price}
-                />
-              </div>
-            </div>
-          ))}
-
+            );
+          })}
         </div>
       </div>
     </main>
