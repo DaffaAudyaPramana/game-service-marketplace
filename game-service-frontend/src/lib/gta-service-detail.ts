@@ -1,7 +1,9 @@
 interface ServiceItem {
-  label: string;
+  label?: string;
+  name?: string;
+  features?: string[];
   price: string;
-  result?: string; // opsional, tidak semua item punya result
+  result?: string;
 }
 
 interface ServiceDetail {
@@ -108,30 +110,75 @@ export const gtaServiceDetail: Record<string, ServiceDetail> = {
 
   paket: {
     title: "Paket Lengkap",
-    description: "Bundle hemat dibanding beli satuan. Money tetap hasil run heist. Proses menyesuaikan cooldown akun. Berlaku untuk Legacy dan Enhanced. PC Only.",
+    description:
+      "Bundle hemat dibanding beli satuan. Money tetap hasil run heist. Proses menyesuaikan cooldown akun. Berlaku untuk Legacy dan Enhanced. PC Only.",
     items: [
       {
-        label: "Paket Saudagar — +100 Rank · Full Max Stats · 3 Kendaraan",
+        name: "Paket Saudagar",
+        features: ["+100 Rank", "Full Max Stats", "3 Kendaraan"],
         price: "Rp 89.000",
         result: "30jt - 34jt (±10x Heist)",
       },
       {
-        label: "Paket Juragan — +250 Rank · Full Max Stats · +1000 LSCM Rep · Fast Run · 5 Kendaraan",
+        name: "Paket Juragan",
+        features: [
+          "+250 Rank",
+          "Full Max Stats",
+          "+1000 LSCM Rep",
+          "Fast Run",
+          "5 Kendaraan",
+        ],
         price: "Rp 149.000",
         result: "60jt - 68jt (±20x Heist)",
       },
       {
-        label: "Paket Ningrat — +500 Rank · Full Max Stats · +1000 LSCM Rep · Fast Run · Unlock All DLC · Unlock Rare Weapons · 10 Kendaraan · 3 Modded Outfit",
+        name: "Paket Ningrat",
+        features: [
+          "+500 Rank",
+          "Full Max Stats",
+          "+1000 LSCM Rep",
+          "Fast Run",
+          "Unlock All DLC",
+          "Unlock Rare Weapons",
+          "10 Kendaraan",
+          "3 Modded Outfit",
+        ],
         price: "Rp 299.000",
         result: "150jt - 170jt (±50x Heist)",
       },
       {
-        label: "Paket Raja — +1000 Rank · Full Max Stats · +1000 LSCM Rep · Fast Run · Unlock All DLC · Unlock Rare Weapons · Unlock Arena War · Unlock All Trophies · 15 Kendaraan · 5 Modded Outfit",
+        name: "Paket Raja",
+        features: [
+          "+1000 Rank",
+          "Full Max Stats",
+          "+1000 LSCM Rep",
+          "Fast Run",
+          "Unlock All DLC",
+          "Unlock Rare Weapons",
+          "Unlock Arena War",
+          "Unlock All Trophies",
+          "15 Kendaraan",
+          "5 Modded Outfit",
+        ],
         price: "Rp 449.000",
         result: "240jt - 272jt (±80x Heist)",
       },
       {
-        label: "Paket Sultan — +8000 Rank · Full Max Stats · +1000 LSCM Rep · Fast Run · Unlock All DLC · Unlock Rare Weapons · Unlock Arena War · Unlock All Trophies · Unlock Bisnis · Unlock Services · 20 Kendaraan · 10 Modded Outfit",
+        name: "Paket Sultan",
+        features: [
+          "+8000 Rank",
+          "Full Max Stats",
+          "+1000 LSCM Rep",
+          "Fast Run",
+          "Unlock All DLC",
+          "Unlock Rare Weapons",
+          "Unlock Arena War",
+          "Unlock All Trophies",
+          "Unlock Bisnis",
+          "Unlock Services",
+          "20 Kendaraan",
+          "10 Modded Outfit",
+        ],
         price: "Rp 649.000",
         result: "300jt - 340jt (±100x Heist)",
       },
