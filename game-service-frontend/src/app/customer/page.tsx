@@ -16,6 +16,9 @@ import {
   User,
   UserCog,
   WalletCards,
+  Gift,
+  Coins,
+  Trophy,
 } from "lucide-react";
 
 type MenuKey =
@@ -24,7 +27,46 @@ type MenuKey =
   | "savedId"
   | "membership"
   | "mutation"
+  | "rewards"
   | "profile";
+
+interface RewardData {
+  id: number;
+  name: string;
+  description?: string | null;
+  category: string;
+  pointsCost: number;
+  stock?: number | null;
+  active: boolean;
+}
+
+interface PointLedgerData {
+  id: number;
+  type: "EARN" | "REDEEM" | "ADJUST";
+  points: number;
+  description?: string | null;
+  balanceAfter: number;
+  createdAt: string;
+  order?: {
+    orderId: string;
+    totalPrice: number;
+    status: string;
+  } | null;
+  redemption?: {
+    id: number;
+    status: string;
+    reward?: RewardData;
+  } | null;
+}
+
+interface RewardRedemptionData {
+  id: number;
+  pointsCost: number;
+  status: string;
+  notes?: string | null;
+  createdAt: string;
+  reward: RewardData;
+}
 
 interface UserData {
   id: number;
@@ -60,6 +102,11 @@ const menuItems = [
     key: "mutation" as MenuKey,
     label: "Mutasi",
     icon: WalletCards,
+  },
+  {
+  key: "rewards" as MenuKey,
+  label: "Poin",
+  icon: Gift,
   },
   {
     key: "profile" as MenuKey,
@@ -108,12 +155,41 @@ interface CustomerOrder {
 
 export default function CustomerPage() {
   const router = useRouter();
-const [orders, setOrders] = useState<CustomerOrder[]>([]);
-const [loadingOrders, setLoadingOrders] = useState(true);
+  const [loadingOrders, setLoadingOrders] = useState(true);
   const [activeMenu, setActiveMenu] = useState<MenuKey>("dashboard");
   const [user, setUser] = useState<UserData | null>(null);
+  const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [loadingUser, setLoadingUser] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [rewards, setRewards] = useState<RewardData[]>([]);
+  const [myPoints, setMyPoints] = useState(0);
+  const [pointLedgers, setPointLedgers] = useState<PointLedgerData[]>([]);
+  const [redemptions, setRedemptions] = useState<RewardRedemptionData[]>([]);
+  const [redeemingRewardId, setRedeemingRewardId] = useState<number | null>(null);
+
+  const refreshRewards = async () => {
+    const rewardRes = await fetch("http://localhost:5000/rewards", {
+      method: "GET",
+    });
+
+    if (rewardRes.ok) {
+      const rewardData = await rewardRes.json();
+      setRewards(rewardData.data || []);
+    }
+
+    const pointsRes = await fetch("http://localhost:5000/rewards/me", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (pointsRes.ok) {
+      const pointsData = await pointsRes.json();
+
+      setMyPoints(pointsData.data.points || 0);
+      setPointLedgers(pointsData.data.ledgers || []);
+      setRedemptions(pointsData.data.redemptions || []);
+    }
+  };
 
 const serviceLabels: Record<string, string> = {
   money: "Money Heist",
@@ -284,6 +360,28 @@ useEffect(() => {
 
       const orderData = await orderRes.json();
       setOrders(orderData.data || []);
+
+      const rewardRes = await fetch("http://localhost:5000/rewards", {
+        method: "GET",
+      });
+
+      if (rewardRes.ok) {
+        const rewardData = await rewardRes.json();
+        setRewards(rewardData.data || []);
+      }
+
+      const pointsRes = await fetch("http://localhost:5000/rewards/me", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (pointsRes.ok) {
+        const pointsData = await pointsRes.json();
+
+        setMyPoints(pointsData.data.points || 0);
+        setPointLedgers(pointsData.data.ledgers || []);
+        setRedemptions(pointsData.data.redemptions || []);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -291,9 +389,49 @@ useEffect(() => {
       setLoadingOrders(false);
     }
   };
-
+  
   getUserAndOrders();
 }, [router]);
+
+const handleRedeemReward = async (rewardId: number) => {
+    try {
+      setRedeemingRewardId(rewardId);
+
+      const res = await fetch(
+        `http://localhost:5000/rewards/${rewardId}/redeem`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            notes: "Redeem dari dashboard customer",
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal redeem reward");
+      }
+
+      alert("Redeem berhasil. Menunggu diproses admin.");
+
+      await refreshRewards();
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Terjadi kesalahan");
+      }
+    } finally {
+      setRedeemingRewardId(null);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -346,6 +484,30 @@ const renderStatus = (status: string) => {
     </span>
   );
 };
+    const rewardDisplayOrder = [
+      "5x Heist",
+      "10x Heist",
+      "15x Heist",
+      "10 Kendaraan",
+      "Pilih & Pasang 1 Set Outfit",
+      "SPESIAL - Bebas Pilih Layanan",
+    ];
+
+    const sortedRewards = useMemo(() => {
+      return [...rewards].sort((a, b) => {
+        const orderA = rewardDisplayOrder.indexOf(a.name);
+        const orderB = rewardDisplayOrder.indexOf(b.name);
+
+        const safeOrderA = orderA === -1 ? 999 : orderA;
+        const safeOrderB = orderB === -1 ? 999 : orderB;
+
+        if (safeOrderA !== safeOrderB) {
+          return safeOrderA - safeOrderB;
+        }
+
+        return a.pointsCost - b.pointsCost;
+      });
+    }, [rewards]);
 
   const renderContent = () => {
     if (!user) return null;
@@ -367,7 +529,19 @@ const renderStatus = (status: string) => {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-lime-400/10 text-lime-400">
+              <Coins size={22} />
+            </div>
+
+            <p className="text-sm text-gray-400">Poin</p>
+
+            <h2 className="mt-2 text-3xl font-extrabold text-lime-400">
+              {myPoints}
+            </h2>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-lime-400/10 text-lime-400">
                 <ReceiptText size={22} />
@@ -867,6 +1041,238 @@ if (activeMenu === "membership") {
         </div>
     );
     }
+
+if (activeMenu === "rewards") {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-extrabold text-white">
+          Poin & Voucher
+        </h1>
+
+        <p className="mt-2 text-sm text-gray-400">
+          Kumpulkan poin dari setiap order selesai dan tukarkan dengan reward.
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-3xl border border-lime-400/20 bg-gradient-to-br from-lime-400/15 via-white/[0.04] to-white/[0.02] p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-lime-400 text-black">
+              <Coins size={28} />
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-300">
+                Poin Kamu
+              </p>
+
+              <h2 className="text-4xl font-extrabold text-white">
+                {myPoints}
+              </h2>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4">
+            <p className="text-sm font-semibold text-white">
+              Cara mendapatkan poin
+            </p>
+
+            <div className="mt-4 rounded-2xl border border-lime-400/20 bg-lime-400/10 p-4">
+              <p className="text-sm font-semibold text-lime-400">
+                Bonus Poin
+              </p>
+
+              <p className="mt-1 text-sm text-gray-300">
+                Order di atas Rp. 200.000 otomatis mendapatkan tambahan 3 poin.
+              </p>
+            </div>
+
+            <p className="mt-2 text-sm leading-relaxed text-gray-400">
+              Setiap order yang sudah selesai akan otomatis mendapatkan poin.
+              Saat ini, Rp 10.000 order selesai = 1 poin. Poin bisa ditukarkan dengan reward seperti Heist, Vehicle, Outift, atau layanan spesial
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-xl font-bold text-white">
+            Riwayat Poin Terbaru
+          </h2>
+
+          <div className="mt-5 space-y-3">
+            {pointLedgers.length === 0 ? (
+              <p className="text-sm text-gray-400">
+                Belum ada riwayat poin.
+              </p>
+            ) : (
+              pointLedgers.slice(0, 5).map((ledger) => (
+                <div
+                  key={ledger.id}
+                  className="rounded-2xl border border-white/10 bg-black/30 p-4"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-white">
+                        {ledger.description || "Aktivitas poin"}
+                      </p>
+
+                      <p className="mt-1 text-xs text-gray-500">
+                        {formatDate(ledger.createdAt)}
+                      </p>
+                    </div>
+
+                    <p
+                      className={`font-extrabold ${
+                        ledger.points > 0
+                          ? "text-lime-400"
+                          : "text-red-300"
+                      }`}
+                    >
+                      {ledger.points > 0 ? "+" : ""}
+                      {ledger.points}
+                    </p>
+                  </div>
+
+                  <p className="mt-2 text-xs text-gray-500">
+                    Saldo setelah transaksi: {ledger.balanceAfter}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+        <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">
+              Daftar Reward
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-400">
+              Tukarkan poin kamu dengan reward yang tersedia.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {rewards.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 md:col-span-2 xl:col-span-3">
+              <p className="text-sm text-gray-400">
+                Belum ada reward tersedia.
+              </p>
+            </div>
+          ) : (
+            sortedRewards.map((reward) => {
+              const enoughPoints = myPoints >= reward.pointsCost;
+              const outOfStock =
+                reward.stock !== null &&
+                reward.stock !== undefined &&
+                reward.stock <= 0;
+
+              return (
+                <div
+                  key={reward.id}
+                  className="rounded-3xl border border-white/10 bg-black/30 p-5"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-400/10 text-lime-400">
+                    <Trophy size={24} />
+                  </div>
+
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h3 className="text-lg font-bold text-white">
+                      {reward.name}
+                    </h3>
+
+                    <span className="rounded-full border border-lime-400/30 bg-lime-400/10 px-3 py-1 text-xs font-bold text-lime-400">
+                      {reward.category}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 min-h-[44px] text-sm leading-relaxed text-gray-400">
+                    {reward.description || "-"}
+                  </p>
+
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                    <p className="text-sm text-gray-400">
+                      Dibutuhkan
+                    </p>
+
+                    <p className="mt-1 text-2xl font-extrabold text-lime-400">
+                      {reward.pointsCost} Poin
+                    </p>
+
+                    {reward.stock !== null && reward.stock !== undefined && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        Stock: {reward.stock}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRedeemReward(reward.id)}
+                    disabled={
+                      !enoughPoints ||
+                      outOfStock ||
+                      redeemingRewardId === reward.id
+                    }
+                    className="mt-5 w-full rounded-2xl bg-lime-400 px-4 py-3 font-bold text-black transition hover:bg-lime-300 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {redeemingRewardId === reward.id
+                      ? "Memproses..."
+                      : outOfStock
+                      ? "Stock Habis"
+                      : enoughPoints
+                      ? "Redeem Reward"
+                      : "Poin Belum Cukup"}
+                  </button>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+        <h2 className="text-2xl font-bold text-white">
+          Riwayat Redeem
+        </h2>
+
+        <div className="mt-5 space-y-3">
+          {redemptions.length === 0 ? (
+            <p className="text-sm text-gray-400">
+              Belum pernah redeem reward.
+            </p>
+          ) : (
+            redemptions.map((redeem) => (
+              <div
+                key={redeem.id}
+                className="rounded-2xl border border-white/10 bg-black/30 p-4"
+              >
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="font-bold text-white">
+                      {redeem.reward.name}
+                    </p>
+
+                    <p className="mt-1 text-sm text-gray-400">
+                      {redeem.pointsCost} poin • {formatDate(redeem.createdAt)}
+                    </p>
+                  </div>
+
+                  {renderStatus(redeem.status)}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
      if (activeMenu === "profile") {
       return (
