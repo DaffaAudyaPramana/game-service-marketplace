@@ -148,6 +148,7 @@ const handleUpload = async () => {
       `http://localhost:5000/orders/${orderId}/upload-proof`,
       {
         method: "POST",
+        credentials: "include",
         body: formData,
       }
     );
