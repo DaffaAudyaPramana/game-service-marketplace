@@ -75,10 +75,10 @@ export default function CheckoutCreateClient() {
 
       const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({
           productId: 1,
           totalPrice: numericPrice,
