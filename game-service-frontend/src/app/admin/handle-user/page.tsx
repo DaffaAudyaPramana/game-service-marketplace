@@ -13,6 +13,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 interface ProductData {
   id: number;
@@ -261,7 +262,7 @@ export default function AdminHandleUserPage() {
     try {
       setLoading(true);
 
-      const meRes = await fetch("http://localhost:5000/auth/me", {
+      const meRes = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -279,7 +280,7 @@ export default function AdminHandleUserPage() {
         return;
       }
 
-      const usersRes = await fetch("http://localhost:5000/admin/users", {
+      const usersRes = await fetch(`${API_URL}/admin/users`, {
         method: "GET",
         credentials: "include",
       });
@@ -312,7 +313,7 @@ export default function AdminHandleUserPage() {
       setUpdatingOrderId(orderId);
 
       const res = await fetch(
-        `http://localhost:5000/orders/${orderId}/payment-status`,
+        `${API_URL}/orders/${orderId}/payment-status`,
         {
           method: "PATCH",
           headers: {

@@ -11,6 +11,7 @@ import {
   XCircle,
   Loader2,
 } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 type Order = {
   id: number;
@@ -145,7 +146,7 @@ const handleUpload = async () => {
     formData.append("file", file);
 
     const res = await fetch(
-      `http://localhost:5000/orders/${orderId}/upload-proof`,
+      `${API_URL}/${orderId}/upload-proof`,
       {
         method: "POST",
         credentials: "include",
@@ -180,7 +181,7 @@ const handleUpload = async () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/orders/${orderId}`
+          `${API_URL}/orders/${orderId}`
         );
 
         const data = await res.json();

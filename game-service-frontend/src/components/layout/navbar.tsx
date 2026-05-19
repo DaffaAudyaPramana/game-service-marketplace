@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LogOut, UserCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
+import { API_URL } from "@/lib/api";
 
 const navLinks = [
   {
@@ -46,7 +47,7 @@ export default function Navbar() {
 
   const checkAuth = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/me", {
+      const res = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -82,7 +83,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/auth/logout", {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_URL } from "@/lib/api";
 
 type Order = {
   id: number;
@@ -22,7 +23,7 @@ export default function AdminOrdersPage() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchOrders = async () => {
-    const res = await fetch("http://localhost:5000/orders");
+    const res = await fetch(`${API_URL}/orders`);
     const data = await res.json();
     setOrders(data.data);
   };
@@ -35,7 +36,7 @@ export default function AdminOrdersPage() {
     try {
       setLoadingId(orderId);
 
-      await fetch(`http://localhost:5000/orders/${orderId}/payment`, {
+      await fetch(`${API_URL}/orders/${orderId}/payment`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -88,12 +89,12 @@ export default function AdminOrdersPage() {
             {/* IMAGE CLICKABLE */}
             {order.payment?.proof && (
               <img
-                src={`http://localhost:5000/uploads/${order.payment.proof}`}
+                src={`${API_URL}/uploads/${order.payment.proof}`}
                 alt="bukti"
                 className="w-full h-40 object-cover rounded cursor-pointer hover:opacity-80 transition"
                 onClick={() =>
                   setPreviewImage(
-                    `http://localhost:5000/uploads/${order.payment?.proof}`
+                    `${API_URL}/uploads/${order.payment?.proof}`
                   )
                 }
               />

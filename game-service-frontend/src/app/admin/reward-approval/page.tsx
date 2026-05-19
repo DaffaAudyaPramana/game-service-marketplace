@@ -15,6 +15,7 @@ import {
   User,
   XCircle,
 } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 type RedemptionStatus = "pending" | "approved" | "rejected" | "completed";
 
@@ -55,8 +56,6 @@ interface RewardRedemption {
   user: RedemptionUser;
   reward: RewardData;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const statusOptions = [
   {

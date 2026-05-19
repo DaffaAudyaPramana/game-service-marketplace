@@ -20,6 +20,7 @@ import {
   Coins,
   Trophy,
 } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 type MenuKey =
   | "dashboard"
@@ -168,7 +169,7 @@ export default function CustomerPage() {
   const [redeemingRewardId, setRedeemingRewardId] = useState<number | null>(null);
 
   const refreshRewards = async () => {
-    const rewardRes = await fetch("http://localhost:5000/rewards", {
+    const rewardRes = await fetch(`${API_URL}/rewards`, {
       method: "GET",
     });
 
@@ -177,7 +178,7 @@ export default function CustomerPage() {
       setRewards(rewardData.data || []);
     }
 
-    const pointsRes = await fetch("http://localhost:5000/rewards/me", {
+    const pointsRes = await fetch(`${API_URL}/rewards/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -336,7 +337,7 @@ const mutationItems = useMemo(() => {
 useEffect(() => {
   const getUserAndOrders = async () => {
     try {
-      const userRes = await fetch("http://localhost:5000/auth/me", {
+      const userRes = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -349,7 +350,7 @@ useEffect(() => {
       const userData = await userRes.json();
       setUser(userData.user);
 
-      const orderRes = await fetch("http://localhost:5000/orders/my", {
+      const orderRes = await fetch(`${API_URL}/orders/my`, {
         method: "GET",
         credentials: "include",
       });
@@ -361,7 +362,7 @@ useEffect(() => {
       const orderData = await orderRes.json();
       setOrders(orderData.data || []);
 
-      const rewardRes = await fetch("http://localhost:5000/rewards", {
+      const rewardRes = await fetch(`${API_URL}/rewards`, {
         method: "GET",
       });
 
@@ -370,7 +371,7 @@ useEffect(() => {
         setRewards(rewardData.data || []);
       }
 
-      const pointsRes = await fetch("http://localhost:5000/rewards/me", {
+      const pointsRes = await fetch(`${API_URL}/rewards/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -398,7 +399,7 @@ const handleRedeemReward = async (rewardId: number) => {
       setRedeemingRewardId(rewardId);
 
       const res = await fetch(
-        `http://localhost:5000/rewards/${rewardId}/redeem`,
+        `${API_URL}/rewards/${rewardId}/redeem`,
         {
           method: "POST",
           headers: {
@@ -437,7 +438,7 @@ const handleRedeemReward = async (rewardId: number) => {
     try {
       setLoggingOut(true);
 
-      await fetch("http://localhost:5000/auth/logout", {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

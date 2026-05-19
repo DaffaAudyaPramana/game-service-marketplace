@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/lib/api";
 
 export default function CheckoutCreateClient() {
   const searchParams = useSearchParams();
@@ -27,7 +28,7 @@ export default function CheckoutCreateClient() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch("http://localhost:5000/auth/me", {
+        const res = await fetch(`${API_URL}/auth/me`, {
           credentials: "include",
         });
 
@@ -72,7 +73,7 @@ export default function CheckoutCreateClient() {
 
       const numericPrice = Number(price.replace(/\D/g, ""));
 
-      const res = await fetch("http://localhost:5000/orders", {
+      const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
