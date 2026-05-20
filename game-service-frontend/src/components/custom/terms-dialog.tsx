@@ -16,18 +16,20 @@ export default function TermsDialog({ service, item, price }: Props) {
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
 
-  // SCROLL LOCK
-    useEffect(() => {
-      if (open) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
+  const discordUrl = "https://discord.gg/PHh98rbMND";
 
-      return () => {
-        document.body.style.overflow = "auto";
-      };
-    }, [open]);
+  // SCROLL LOCK
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [open]);
 
   // ⌨️ ESC CLOSE
   useEffect(() => {
@@ -108,7 +110,6 @@ export default function TermsDialog({ service, item, price }: Props) {
       {/* MODAL */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-
           {/* BACKDROP */}
           <div
             onClick={handleClose}
@@ -132,7 +133,6 @@ export default function TermsDialog({ service, item, price }: Props) {
 
             {/* CONTENT */}
             <div className="text-sm space-y-4 mb-6">
-
               <div>
                 <p className="text-lime-400 font-semibold">WAJIB</p>
                 <ul className="list-disc ml-5 text-gray-300">
@@ -160,7 +160,6 @@ export default function TermsDialog({ service, item, price }: Props) {
                   <li>No refund setelah proses</li>
                 </ul>
               </div>
-
             </div>
 
             {/* CHECKBOX */}
@@ -183,6 +182,16 @@ export default function TermsDialog({ service, item, price }: Props) {
               Lanjut ke Checkout
             </button>
 
+            {/* DISCORD BACKUP ORDER */}
+            <a
+              href={discordUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex w-full items-center justify-center rounded-lg bg-[#5865F2] py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-[#4752C4]"
+            >
+              Jika web gangguan order via Discord
+            </a>
+
             {/* CANCEL */}
             <button
               onClick={handleClose}
@@ -197,7 +206,6 @@ export default function TermsDialog({ service, item, price }: Props) {
                 Harap centang persetujuan terlebih dahulu
               </div>
             )}
-
           </div>
         </div>
       )}
