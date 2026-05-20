@@ -12,6 +12,8 @@ export default function CheckoutCreateClient() {
   const service = searchParams.get("service") || "";
   const item = searchParams.get("item") || "";
   const price = searchParams.get("price") || "";
+  const productIdParam = searchParams.get("productId") || "";
+  const productId = Number(productIdParam);
 
   const [form, setForm] = useState({
     name: "",
@@ -71,7 +73,10 @@ export default function CheckoutCreateClient() {
         return;
       }
 
-      const numericPrice = Number(price.replace(/\D/g, ""));
+      if (!productId || Number.isNaN(productId)) {
+        alert("Produk tidak valid. Silakan pilih item ulang.");
+        return;
+      }
 
       const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -80,8 +85,7 @@ export default function CheckoutCreateClient() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productId: 1,
-          totalPrice: numericPrice,
+          productId,
 
           name: customerName,
           method: form.method,
