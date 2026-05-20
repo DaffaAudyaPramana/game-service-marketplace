@@ -214,9 +214,9 @@ const formatDate = (date: string) => {
 };
 
 const getServiceName = (order: CustomerOrder) => {
-  const category = order.product?.category || "";
+  const key = order.product?.type || order.product?.category || "";
 
-  return serviceLabels[category] || order.product?.category || "Order";
+  return serviceLabels[key] || key || "Order";
 };
 
 const getItemName = (order: CustomerOrder) => {
