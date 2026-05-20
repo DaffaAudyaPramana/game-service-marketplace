@@ -73,8 +73,15 @@ export default function CheckoutCreateClient() {
         return;
       }
 
-      if (!productId || Number.isNaN(productId)) {
+      if (productIdParam && (!productId || Number.isNaN(productId))) {
         alert("Produk tidak valid. Silakan pilih item ulang.");
+        return;
+      }
+
+      const numericPrice = Number(price.replace(/\D/g, ""));
+
+      if (!numericPrice || Number.isNaN(numericPrice)) {
+        alert("Harga produk tidak valid. Silakan pilih item ulang.");
         return;
       }
 
@@ -85,7 +92,12 @@ export default function CheckoutCreateClient() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productId,
+          productId: productId || undefined,
+
+          // fallback supaya backend bisa cari produk meskipun productId belum ada di URL
+          service,
+          item,
+          totalPrice: numericPrice,
 
           name: customerName,
           method: form.method,
