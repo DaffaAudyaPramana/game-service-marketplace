@@ -15,14 +15,26 @@ export default function OrderSuccessPage() {
   const params = useParams();
   const orderId = params.orderId as string;
 
-  const discordUrl = "https://discord.gg/MBv8uPM2";
+  const discordUrl = "https://discord.gg/yQ7X7ceF8v";
 
-  const whatsappNumber = "6282227529815";
   const whatsappMessage = encodeURIComponent(
     `Halo admin HyperIndoStore, saya sudah upload bukti transfer untuk order ${orderId}. Mohon dibantu proses konfirmasinya.`
   );
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const whatsappAdmins = [
+    {
+      label: "WhatsApp Admin 1",
+      number: "6282227529815",
+      description:
+        "Hubungi admin WhatsApp kami untuk konfirmasi manual jika kamu tidak memakai Discord.",
+    },
+    {
+      label: "WhatsApp Admin 2",
+      number: "6282296221189",
+      description:
+        "Alternatif admin WhatsApp kami jika admin pertama belum merespon.",
+    },
+  ];
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black px-6 py-16 text-white">
@@ -32,7 +44,7 @@ export default function OrderSuccessPage() {
       {/* GRADIENT */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-lime-400/10 via-black/70 to-black" />
 
-      <div className="relative z-10 mx-auto flex min-h-[75vh] max-w-3xl items-center justify-center">
+      <div className="relative z-10 mx-auto flex min-h-[75vh] max-w-4xl items-center justify-center">
         <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-xl">
           {/* TOP DECORATION */}
           <div className="border-b border-white/10 bg-lime-400/10 px-6 py-8 text-center">
@@ -59,9 +71,7 @@ export default function OrderSuccessPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-400">
-                    Order ID
-                  </p>
+                  <p className="text-sm text-gray-400">Order ID</p>
 
                   <h2 className="mt-1 break-all text-xl font-extrabold text-lime-400">
                     {orderId}
@@ -74,7 +84,7 @@ export default function OrderSuccessPage() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
               {/* DISCORD */}
               <a
                 href={discordUrl}
@@ -82,7 +92,7 @@ export default function OrderSuccessPage() {
                 rel="noopener noreferrer"
                 className="group rounded-2xl border border-lime-400/30 bg-lime-400/10 p-5 transition hover:-translate-y-1 hover:bg-lime-400 hover:text-black"
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex h-full items-start justify-between gap-4">
                   <div>
                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-400 text-black group-hover:bg-black group-hover:text-lime-400">
                       <Send size={22} />
@@ -102,32 +112,41 @@ export default function OrderSuccessPage() {
                 </div>
               </a>
 
-              {/* WHATSAPP */}
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-lime-400/50 hover:bg-lime-400/10"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-lime-400">
-                      <MessageCircle size={22} />
+              {/* WHATSAPP ADMINS */}
+              {whatsappAdmins.map((admin) => {
+                const whatsappUrl = `https://wa.me/${admin.number}?text=${whatsappMessage}`;
+
+                return (
+                  <a
+                    key={admin.number}
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-lime-400/50 hover:bg-lime-400/10"
+                  >
+                    <div className="flex h-full items-start justify-between gap-4">
+                      <div>
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-lime-400 group-hover:bg-lime-400 group-hover:text-black">
+                          <MessageCircle size={22} />
+                        </div>
+
+                        <h3 className="font-extrabold text-white">
+                          Klik untuk lanjut ke {admin.label}
+                        </h3>
+
+                        <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                          {admin.description}
+                        </p>
+                      </div>
+
+                      <ExternalLink
+                        size={18}
+                        className="shrink-0 text-gray-400"
+                      />
                     </div>
-
-                    <h3 className="font-extrabold text-white">
-                      Klik untuk lanjut ke WhatsApp
-                    </h3>
-
-                    <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                      Hubungi admin WhatsApp untuk konfirmasi manual jika kamu
-                      tidak memakai Discord.
-                    </p>
-                  </div>
-
-                  <ExternalLink size={18} className="shrink-0 text-gray-400" />
-                </div>
-              </a>
+                  </a>
+                );
+              })}
             </div>
 
             <div className="mt-6 rounded-2xl border border-lime-400/20 bg-lime-400/10 p-5">
