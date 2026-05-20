@@ -156,9 +156,9 @@ export default function AdminHandleUserPage() {
   };
 
   const getServiceName = (order: OrderData) => {
-    const category = order.product?.category || "";
+    const key = order.product?.type || order.product?.category || "";
 
-    return serviceLabels[category] || category || "Order";
+    return serviceLabels[key] || key || "Order";
   };
 
   const getItemName = (order: OrderData) => {
