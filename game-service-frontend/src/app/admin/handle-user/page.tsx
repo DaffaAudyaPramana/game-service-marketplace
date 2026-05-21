@@ -52,6 +52,8 @@ interface OrderData {
   platform?: string | null;
   version?: string | null;
   gameUserId?: string | null;
+  whatsapp?: string | null;
+  discordUsername?: string | null;
   notes?: string | null;
   createdAt: string;
 
@@ -653,10 +655,22 @@ export default function AdminHandleUserPage() {
                                 </p>
 
                                 <p>
+                                  <span className="text-gray-500">WhatsApp:</span>{" "}
+                                  {order.whatsapp || "-"}
+                                </p>
+
+                                <p>
                                   <span className="text-gray-500">
                                     Rockstar ID:
                                   </span>{" "}
                                   {order.gameUserId || "-"}
+                                </p>
+
+                                <p>
+                                  <span className="text-gray-500">
+                                    User Discord:
+                                  </span>{" "}
+                                  {order.discordUsername || "-"}
                                 </p>
 
                                 <p>
