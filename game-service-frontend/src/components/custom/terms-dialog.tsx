@@ -18,6 +18,22 @@ export default function TermsDialog({ service, item, price }: Props) {
 
   const discordUrl = "https://discord.gg/PHh98rbMND";
 
+  const whatsappAdmin1 = "6282227529815";
+  const whatsappAdmin2 = "6282296221189";
+
+  const whatsappMessage = encodeURIComponent(
+    `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+
+  Service: ${service}
+  Item: ${item}
+  Harga: ${price}
+
+  Mohon dibantu proses ordernya.`
+  );
+
+  const whatsappAdmin1Url = `https://wa.me/${whatsappAdmin1}?text=${whatsappMessage}`;
+  const whatsappAdmin2Url = `https://wa.me/${whatsappAdmin2}?text=${whatsappMessage}`;
+
   // SCROLL LOCK
   useEffect(() => {
     if (open) {
@@ -191,6 +207,33 @@ export default function TermsDialog({ service, item, price }: Props) {
             >
               Jika web gangguan order via Discord
             </a>
+
+            {/* WHATSAPP BACKUP ORDER */}
+            <div className="mt-3">
+              <p className="mb-2 text-center text-sm font-semibold text-gray-200">
+                Atau order via WhatsApp
+              </p>
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <a
+                  href={whatsappAdmin1Url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-green-600"
+                >
+                  Hubungi Admin 1
+                </a>
+
+                <a
+                  href={whatsappAdmin2Url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 text-sm font-semibold text-white transition hover:scale-105 hover:bg-green-600"
+                >
+                  Hubungi Admin 2
+                </a>
+              </div>
+            </div>
 
             {/* CANCEL */}
             <button
