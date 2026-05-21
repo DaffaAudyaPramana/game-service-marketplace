@@ -21,6 +21,8 @@ export default function CheckoutCreateClient() {
     platform: "steam",
     version: "legacy",
     rockstarId: "",
+    whatsapp: "",
+    discordUsername: "",
     notes: "",
   });
 
@@ -67,9 +69,11 @@ export default function CheckoutCreateClient() {
 
       const customerName = form.name.trim();
       const rockstarId = form.rockstarId.trim();
+      const whatsapp = form.whatsapp.trim();
+      const discordUsername = form.discordUsername.trim();
 
-      if (!customerName || !rockstarId) {
-        alert("Nama & ID Rockstar wajib diisi!");
+      if (!customerName || !rockstarId || !whatsapp || !discordUsername) {
+        alert("Nama, Rockstar ID, WhatsApp, dan Username Discord wajib diisi!");
         return;
       }
 
@@ -104,6 +108,8 @@ export default function CheckoutCreateClient() {
           platform: form.platform,
           version: form.version,
           gameUserId: rockstarId,
+          whatsapp,
+          discordUsername,
           notes: form.notes,
         }),
       });
@@ -247,6 +253,36 @@ export default function CheckoutCreateClient() {
                 setForm({
                   ...form,
                   rockstarId: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-400">WhatsApp</label>
+            <input
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
+              placeholder="Contoh: 6281234567890"
+              value={form.whatsapp}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  whatsapp: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-400">Username Discord</label>
+            <input
+              className="w-full p-3 rounded bg-white/5 border border-white/10 text-white"
+              placeholder="Contoh: daffaaudya / daffa#1234 || jika tidak pakai isi - saja"
+              value={form.discordUsername}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  discordUsername: e.target.value,
                 })
               }
             />
