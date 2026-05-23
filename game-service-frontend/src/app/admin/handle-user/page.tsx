@@ -93,6 +93,15 @@ interface AuthUser {
   role: string;
 }
 
+interface ManualRevenueData {
+  id: number;
+  amount: number;
+  description?: string | null;
+  createdById?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const statusOptions = [
   {
     label: "Semua",
@@ -133,6 +142,12 @@ export default function AdminHandleUserPage() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const [manualRevenues, setManualRevenues] = useState<ManualRevenueData[]>([]);
+  const [manualAmount, setManualAmount] = useState("");
+  const [manualDescription, setManualDescription] = useState("");
+  const [editingManualRevenueId, setEditingManualRevenueId] = useState<number | null>(null);
+  const [submittingManualRevenue, setSubmittingManualRevenue] = useState(false);
 
   const [toast, setToast] = useState<{
     type: "success" | "error";
@@ -221,6 +236,14 @@ export default function AdminHandleUserPage() {
       .filter((order) => order.status === "completed")
       .reduce((total, order) => total + order.totalPrice, 0);
   }, [allOrders]);
+
+  const manualRevenueTotal = useMemo(() => {
+    return manualRevenues.reduce((total, item) => total + Number(item.amount || 0), 0);
+  }, [manualRevenues]);
+
+  const grandTotalRevenue = useMemo(() => {
+    return totalRevenue + manualRevenueTotal;
+  }, [totalRevenue, manualRevenueTotal]);
 
   const pendingOrders = useMemo(() => {
     return allOrders.filter((order) => order.status === "pending").length;
@@ -334,6 +357,18 @@ export default function AdminHandleUserPage() {
       }
 
       setUsers(usersData.data || []);
+      const manualRevenueRes = await fetch(`${API_URL}/admin/manual-revenues`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const manualRevenueData = await manualRevenueRes.json();
+
+      if (!manualRevenueRes.ok) {
+        throw new Error(manualRevenueData.error || "Gagal mengambil data revenue manual");
+      }
+
+      setManualRevenues(manualRevenueData.data || []);
     } catch (error) {
       console.error(error);
 
@@ -392,6 +427,111 @@ export default function AdminHandleUserPage() {
       }
     } finally {
       setUpdatingOrderId(null);
+    }
+  };
+
+  const parseManualAmount = (value: string) => {
+    return Number(value.replace(/[^\d-]/g, ""));
+  };
+
+  const resetManualRevenueForm = () => {
+    setManualAmount("");
+    setManualDescription("");
+    setEditingManualRevenueId(null);
+  };
+
+  const handleSubmitManualRevenue = async () => {
+    try {
+      setSubmittingManualRevenue(true);
+
+      const amount = parseManualAmount(manualAmount);
+
+      if (!amount || Number.isNaN(amount)) {
+        showToast("error", "Nominal revenue wajib diisi dan tidak boleh 0");
+        return;
+      }
+
+      const url = editingManualRevenueId
+        ? `${API_URL}/admin/manual-revenues/${editingManualRevenueId}`
+        : `${API_URL}/admin/manual-revenues`;
+
+      const method = editingManualRevenueId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount,
+          description: manualDescription.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal menyimpan revenue manual");
+      }
+
+      showToast(
+        "success",
+        editingManualRevenueId
+          ? "Revenue manual berhasil diupdate"
+          : "Revenue manual berhasil ditambahkan"
+      );
+
+      resetManualRevenueForm();
+      await fetchAdminData();
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        showToast("error", error.message);
+      } else {
+        showToast("error", "Terjadi kesalahan");
+      }
+    } finally {
+      setSubmittingManualRevenue(false);
+    }
+  };
+
+  const handleEditManualRevenue = (item: ManualRevenueData) => {
+    setEditingManualRevenueId(item.id);
+    setManualAmount(String(item.amount));
+    setManualDescription(item.description || "");
+  };
+
+  const handleDeleteManualRevenue = async (id: number) => {
+    const confirmDelete = window.confirm(
+      "Yakin ingin menghapus revenue manual ini?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${API_URL}/admin/manual-revenues/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal menghapus revenue manual");
+      }
+
+      showToast("success", "Revenue manual berhasil dihapus");
+      await fetchAdminData();
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        showToast("error", error.message);
+      } else {
+        showToast("error", "Terjadi kesalahan");
+      }
     }
   };
 
@@ -477,8 +617,11 @@ export default function AdminHandleUserPage() {
             <p className="text-sm text-gray-400">Total Revenue</p>
 
             <h2 className="mt-2 text-2xl font-extrabold text-lime-400">
-                {formatRupiah(totalRevenue)}
+                {formatRupiah(grandTotalRevenue)}
             </h2>
+            <p className="mt-2 text-xs text-gray-500">
+              Web: {formatRupiah(totalRevenue)} · Manual: {formatRupiah(manualRevenueTotal)}
+            </p>
             </div>
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-400/10 text-lime-400">
@@ -519,6 +662,135 @@ export default function AdminHandleUserPage() {
               {rejectedOrders}
             </h2>
           </div>
+        </div>
+
+        <div className="mt-5 rounded-3xl border border-lime-400/20 bg-lime-400/[0.04] p-5">
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-lime-400">
+                Revenue Manual
+              </p>
+
+              <h2 className="mt-2 text-2xl font-extrabold text-white">
+                Input Revenue Order Manual
+              </h2>
+
+              <p className="mt-2 max-w-2xl text-sm text-gray-400">
+                Gunakan fitur ini untuk mencatat order via WhatsApp atau order manual
+                yang tidak masuk melalui website. Untuk koreksi, gunakan nominal negatif
+                atau edit data yang sudah masuk.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+              <p className="text-xs text-gray-500">Total Manual</p>
+              <p className="text-xl font-extrabold text-lime-400">
+                {formatRupiah(manualRevenueTotal)}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-[220px_1fr_160px]">
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-300">
+                Nominal
+              </label>
+
+              <input
+                type="text"
+                placeholder="150000 / -50000"
+                value={manualAmount}
+                onChange={(e) => setManualAmount(e.target.value)}
+                className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-white placeholder:text-gray-500 outline-none transition focus:border-lime-400"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-300">
+                Keterangan
+              </label>
+
+              <input
+                type="text"
+                placeholder="Contoh: Order WA Paket Sultan - customer A"
+                value={manualDescription}
+                onChange={(e) => setManualDescription(e.target.value)}
+                className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-4 text-white placeholder:text-gray-500 outline-none transition focus:border-lime-400"
+              />
+            </div>
+
+            <div className="flex items-end gap-2">
+              <button
+                type="button"
+                onClick={handleSubmitManualRevenue}
+                disabled={submittingManualRevenue}
+                className="w-full rounded-2xl bg-lime-400 px-4 py-4 text-sm font-black text-black transition hover:bg-lime-300 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submittingManualRevenue
+                  ? "Menyimpan..."
+                  : editingManualRevenueId
+                  ? "Update"
+                  : "Tambah"}
+              </button>
+
+              {editingManualRevenueId && (
+                <button
+                  type="button"
+                  onClick={resetManualRevenueForm}
+                  className="rounded-2xl border border-white/10 px-4 py-4 text-sm font-bold text-gray-300 transition hover:bg-white/10 hover:text-white"
+                >
+                  Batal
+                </button>
+              )}
+            </div>
+          </div>
+
+          {manualRevenues.length > 0 && (
+            <div className="mt-5 space-y-3">
+              {manualRevenues.slice(0, 5).map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/30 p-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <p
+                      className={`font-extrabold ${
+                        item.amount >= 0 ? "text-lime-400" : "text-red-300"
+                      }`}
+                    >
+                      {formatRupiah(item.amount)}
+                    </p>
+
+                    <p className="mt-1 text-sm text-gray-300">
+                      {item.description || "-"}
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-500">
+                      {formatDate(item.createdAt)}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEditManualRevenue(item)}
+                      className="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-gray-300 transition hover:bg-white/10 hover:text-white"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteManualRevenue(item.id)}
+                      className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm font-bold text-red-300 transition hover:bg-red-500/20"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.04] p-5">
