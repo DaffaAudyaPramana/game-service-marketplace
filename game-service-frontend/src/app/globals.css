@@ -89,3 +89,34 @@
 html {
   scroll-behavior: smooth;
 }
+
+@keyframes cartToastIn {
+  from {
+    opacity: 0;
+    transform: translateX(28px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes cartToastProgress {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+.cart-toast-card {
+  animation: cartToastIn 260ms ease-out;
+}
+
+.cart-toast-progress {
+  animation: cartToastProgress 3000ms linear forwards;
+  -webkit-animation: cartToastProgress 3000ms linear forwards;
+}
