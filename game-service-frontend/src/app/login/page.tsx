@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [redirectPath, setRedirectPath] = useState("/");
 
   const [form, setForm] = useState({
     email: "",
@@ -29,6 +30,15 @@ export default function LoginPage() {
       setNotif(null);
     }, 3000);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+
+    if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
+      setRedirectPath(redirect);
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -59,18 +69,32 @@ export default function LoginPage() {
       const pendingCheckout = localStorage.getItem("pending_checkout");
 
     setTimeout(() => {
-      if (pendingCheckout) {
-        const checkoutData = JSON.parse(pendingCheckout);
-
-        router.push(
-          `/checkout/create?service=${checkoutData.service}&item=${encodeURIComponent(
-            checkoutData.item
-          )}&price=${encodeURIComponent(checkoutData.price)}`
-        );
-
+      // Prioritas 1: balik ke halaman tujuan sebelum login
+      // Contoh: /checkout/create?mode=cart
+      if (redirectPath && redirectPath !== "/") {
+        router.push(redirectPath);
         return;
       }
 
+      // Prioritas 2: fallback untuk flow checkout lama/single item
+      if (pendingCheckout) {
+        try {
+          const checkoutData = JSON.parse(pendingCheckout);
+
+          router.push(
+            `/checkout/create?service=${checkoutData.service}&item=${encodeURIComponent(
+              checkoutData.item
+            )}&price=${encodeURIComponent(checkoutData.price)}`
+          );
+
+          return;
+        } catch (err) {
+          console.error("Pending checkout tidak valid:", err);
+          localStorage.removeItem("pending_checkout");
+        }
+      }
+
+      // Prioritas 3: default ke homepage
       router.push("/");
     }, 1200);
   } catch (err) {
