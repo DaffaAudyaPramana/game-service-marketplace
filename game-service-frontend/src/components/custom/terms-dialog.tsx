@@ -2,19 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { addToCart } from "@/lib/cart";
 
 interface Props {
   service: string;
   item: string;
   price: string;
+  mode?: "add-to-cart" | "cart-checkout";
+  triggerLabel?: string;
+  triggerClassName?: string;
 }
 
-export default function TermsDialog({ service, item, price }: Props) {
+export default function TermsDialog({ 
+  service, 
+  item, 
+  price,
+  mode = "add-to-cart",
+  triggerLabel,
+  triggerClassName, 
+}: Props) {
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [agree, setAgree] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const router = useRouter();
+
+  const dialogMode = mode;
 
   const discordUrl = "https://discord.gg/PHh98rbMND";
 
@@ -96,7 +109,13 @@ export default function TermsDialog({ service, item, price }: Props) {
       return;
     }
 
-    // SIMPAN CHECKOUT TERAKHIR
+    localStorage.setItem("terms_accepted", "true");
+
+    if (dialogMode === "cart-checkout") {
+      router.push("/checkout/create?mode=cart");
+      return;
+    }
+
     localStorage.setItem(
       "pending_checkout",
       JSON.stringify({
@@ -117,10 +136,40 @@ export default function TermsDialog({ service, item, price }: Props) {
     <>
       {/* BUTTON */}
       <button
-        onClick={() => setOpen(true)}
-        className="bg-lime-400 text-black px-4 py-2 rounded-lg hover:scale-105 transition"
+        type="button"
+        onClick={() => {
+          if (dialogMode === "cart-checkout") {
+            setAgree(false);
+            setOpen(true);
+            return;
+          }
+
+          const itemName = item || "Item";
+
+          addToCart({
+            service,
+            name: itemName,
+            price,
+          });
+
+          window.dispatchEvent(
+            new CustomEvent("hyperindo-cart-toast", {
+              detail: {
+                name: itemName,
+                price,
+              },
+            })
+          );
+        }}
+        className={
+          triggerClassName ||
+          "bg-lime-400 text-black px-4 py-2 rounded-lg hover:scale-105 transition"
+        }
       >
-        Order
+        {triggerLabel ||
+          (dialogMode === "cart-checkout"
+            ? "Checkout Semua Item"
+            : "Masukkan ke Keranjang")}
       </button>
 
       {/* MODAL */}
@@ -192,11 +241,13 @@ export default function TermsDialog({ service, item, price }: Props) {
 
             {/* ACTION */}
             <button
-              onClick={handleContinue}
-              className="w-full bg-lime-400 text-black py-2 rounded-lg font-semibold hover:scale-105 transition"
-            >
-              Lanjut ke Checkout
-            </button>
+                onClick={handleContinue}
+                className="w-full bg-lime-400 text-black py-2 rounded-lg font-semibold hover:scale-105 transition"
+              >
+                {dialogMode === "cart-checkout"
+                  ? "Saya Setuju, Checkout Semua Item"
+                  : "Lanjut ke Checkout"}
+              </button>
 
             {/* DISCORD BACKUP ORDER */}
             <a
