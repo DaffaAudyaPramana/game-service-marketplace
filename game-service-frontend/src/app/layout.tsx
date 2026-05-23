@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/navbar";
+import CartToast from "@/components/custom/cart-toast";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +36,7 @@ export default function RootLayout({
       )}
     >
       <body className="antialiased bg-black text-white overflow-x-hidden">
-
+        <CartToast />
         <Navbar />
 
         <main className="pt-20 min-h-screen overflow-y-auto">
