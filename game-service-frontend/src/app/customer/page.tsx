@@ -146,12 +146,29 @@ interface CustomerOrder {
   platform?: string | null;
   version?: string | null;
   gameUserId?: string | null;
+  whatsapp?: string | null;
+  discordUsername?: string | null;
   notes?: string | null;
 
   createdAt: string;
 
   product?: ProductData;
   payment?: PaymentData | null;
+  orderItems?: OrderItemData[];
+}
+
+interface OrderItemData {
+  id: number;
+  orderId: number;
+  productId: number;
+  productName: string;
+  productCategory: string;
+  productType: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+  createdAt: string;
+  product?: ProductData;
 }
 
 export default function CustomerPage() {
@@ -213,7 +230,32 @@ const formatDate = (date: string) => {
   });
 };
 
+const getOrderItemsText = (order: CustomerOrder) => {
+  if (order.orderItems && order.orderItems.length > 0) {
+    return order.orderItems
+      .map((item: OrderItemData) => {
+        const qty = item.quantity > 1 ? ` x${item.quantity}` : "";
+        return `${item.productName}${qty}`;
+      })
+      .join(", ");
+  }
+
+  return order.product?.name || "-";
+};
+
 const getServiceName = (order: CustomerOrder) => {
+  if (order.orderItems && order.orderItems.length > 0) {
+    const services = [
+      ...new Set(
+        order.orderItems.map((item: OrderItemData) => {
+          return serviceLabels[item.productType] || item.productType;
+        })
+      ),
+    ];
+
+    return services.length === 1 ? services[0] : "Custom Order";
+  }
+
   const key = order.product?.type || order.product?.category || "";
 
   return serviceLabels[key] || key || "Order";
@@ -631,7 +673,7 @@ const renderStatus = (status: string) => {
                         </p>
 
                         <h3 className="mt-1 font-bold text-white">
-                            {getServiceName(order)} — {getItemName(order)}
+                            {getServiceName(order)} — {getOrderItemsText(order)}
                         </h3>
 
                         <p className="mt-1 text-sm text-gray-500">
@@ -751,7 +793,7 @@ const renderStatus = (status: string) => {
 
                         <td className="px-5 py-4">
                         <p className="font-semibold text-white">
-                            {getServiceName(order)}
+                            {getServiceName(order)} — {getOrderItemsText(order)}
                         </p>
                         <p className="mt-1 text-gray-400">
                             {getItemName(order)}
