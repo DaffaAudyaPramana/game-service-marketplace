@@ -6,6 +6,7 @@ import { LogOut, UserCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "@/lib/api";
+import { getCart } from "@/lib/cart";
 
 const navLinks = [
   {
@@ -44,6 +45,7 @@ export default function Navbar() {
 
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [cartCount, setCartCount] = useState(0);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -80,6 +82,24 @@ export default function Navbar() {
       window.removeEventListener("auth-change", handleAuthChange);
     };
   }, [checkAuth]);
+
+  useEffect(() => {
+    const syncCart = () => {
+      const items = getCart();
+      const totalQty = items.reduce((total, item) => total + item.quantity, 0);
+      setCartCount(totalQty);
+    };
+
+    syncCart();
+
+    window.addEventListener("cart-updated", syncCart);
+    window.addEventListener("storage", syncCart);
+
+    return () => {
+      window.removeEventListener("cart-updated", syncCart);
+      window.removeEventListener("storage", syncCart);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -144,6 +164,20 @@ export default function Navbar() {
             })}
           </div>
 
+          {/* CART */}
+          <Link
+            href="/cart"
+            className="relative flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-bold text-white transition hover:border-lime-400/60 hover:bg-lime-400/10 hover:text-lime-400"
+          >
+            Keranjang
+
+            {cartCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-lime-400 px-2 text-xs font-black text-black">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
           {/* AUTH AREA */}
           {!loadingUser && user ? (
             <>
@@ -187,6 +221,19 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       <div className="flex gap-2 overflow-x-auto border-t border-white/10 px-4 py-3 md:hidden">
+        <Link
+          href="/cart"
+          className="relative whitespace-nowrap rounded-full bg-white/[0.04] px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-lime-400 hover:text-black"
+        >
+          Keranjang
+
+          {cartCount > 0 && (
+            <span className="ml-2 rounded-full bg-lime-400 px-2 py-0.5 text-xs font-black text-black">
+              {cartCount}
+            </span>
+          )}
+        </Link>
+
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
 
