@@ -70,7 +70,10 @@ export default function CheckoutCreateClient() {
         });
 
         if (res.status === 401) {
-          router.push("/login");
+          const currentPath =
+            window.location.pathname + window.location.search;
+
+          router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
         }
       } catch (err) {
         console.error(err);
