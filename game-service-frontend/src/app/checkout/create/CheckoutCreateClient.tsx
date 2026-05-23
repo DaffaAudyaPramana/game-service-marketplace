@@ -4,9 +4,19 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { API_URL } from "@/lib/api";
+import {
+  CartItem,
+  clearCart,
+  getCart,
+  getCartTotal,
+  parseRupiah,
+} from "@/lib/cart";
 
 export default function CheckoutCreateClient() {
   const searchParams = useSearchParams();
+  const mode = searchParams.get("mode") || "";
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  
   const router = useRouter();
 
   const service = searchParams.get("service") || "";
@@ -26,8 +36,31 @@ export default function CheckoutCreateClient() {
     notes: "",
   });
 
+  const singleItemPrice = parseRupiah(price);
+
+  const checkoutItems =
+    mode === "cart"
+      ? cartItems
+      : [
+          {
+            id: `${service}-${item}-${singleItemPrice}`,
+            service,
+            name: item,
+            price: singleItemPrice,
+            quantity: 1,
+          },
+        ];
+
+  const checkoutTotal = getCartTotal(checkoutItems);
+
   const [loading, setLoading] = useState(false);
   const [processingDots, setProcessingDots] = useState(".");
+
+  useEffect(() => {
+    if (mode === "cart") {
+      setCartItems(getCart());
+    }
+  }, [mode]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -72,6 +105,11 @@ export default function CheckoutCreateClient() {
       const whatsapp = form.whatsapp.trim();
       const discordUsername = form.discordUsername.trim();
 
+      if (!checkoutItems.length || checkoutTotal <= 0) {
+        alert("Item checkout tidak valid. Silakan pilih item ulang.");
+        return;
+      }
+
       if (!customerName || !rockstarId || !whatsapp || !discordUsername) {
         alert("Nama, Rockstar ID, WhatsApp, dan Username Discord wajib diisi!");
         return;
@@ -82,13 +120,6 @@ export default function CheckoutCreateClient() {
         return;
       }
 
-      const numericPrice = Number(price.replace(/\D/g, ""));
-
-      if (!numericPrice || Number.isNaN(numericPrice)) {
-        alert("Harga produk tidak valid. Silakan pilih item ulang.");
-        return;
-      }
-
       const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         credentials: "include",
@@ -96,12 +127,14 @@ export default function CheckoutCreateClient() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          productId: productId || undefined,
-
-          // fallback supaya backend bisa cari produk meskipun productId belum ada di URL
-          service,
-          item,
-          totalPrice: numericPrice,
+          items: checkoutItems.map((item) => ({
+            productId: item.productId,
+            service: item.service,
+            name: item.name,
+            item: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
 
           name: customerName,
           method: form.method,
@@ -123,6 +156,11 @@ export default function CheckoutCreateClient() {
       const orderId = data.data.order.orderId;
 
       localStorage.removeItem("pending_checkout");
+
+      if (mode === "cart") {
+        clearCart();
+      }
+
       router.push(`/checkout/success/${orderId}`);
     } catch (err: unknown) {
       console.error(err);
@@ -142,19 +180,38 @@ export default function CheckoutCreateClient() {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-2">Checkout</h1>
 
-        <p className="text-gray-400 mb-6">Diisi dengan baik dan benar</p>
-
         <div className="p-4 border border-white/10 rounded-xl mb-6">
-          <p>
-            <strong>Service:</strong> {service}
-          </p>
-          <p>
-            <strong>Item:</strong> {item}
-          </p>
-          <p className="text-lime-400 font-bold">
-            <strong>Price:</strong> {price}
-          </p>
+          <p className="mb-3 font-bold">Ringkasan Order</p>
+
+          <div className="space-y-3">
+            {checkoutItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-start justify-between gap-4 border-b border-white/10 pb-3 last:border-b-0"
+              >
+                <div>
+                  <p className="font-semibold">{item.name}</p>
+                  <p className="text-sm text-gray-400">
+                    {item.service} x{item.quantity}
+                  </p>
+                </div>
+
+                <p className="font-bold text-lime-400">
+                  Rp {(item.price * item.quantity).toLocaleString("id-ID")}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
+            <p className="font-bold">Total</p>
+            <p className="text-xl font-extrabold text-lime-400">
+              Rp {checkoutTotal.toLocaleString("id-ID")}
+            </p>
+          </div>
         </div>
+
+        <p className="text-gray-400 mb-6">Isi data anda yang sesuai dan benar</p>
 
         <div className="space-y-5">
           <div>
