@@ -60,6 +60,19 @@ interface OrderData {
   product?: ProductData;
   payment?: PaymentData | null;
   gtaOrder?: GTAOrderData | null;
+  orderItems?: OrderItemData[];
+}
+
+interface OrderItemData {
+  id: number;
+  productId: number;
+  productName: string;
+  productCategory: string;
+  productType: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+  product?: ProductData;
 }
 
 interface AdminUser {
@@ -157,15 +170,40 @@ export default function AdminHandleUserPage() {
     return name || user.email;
   };
 
+  const getOrderItemsText = (order: OrderData) => {
+    if (order.orderItems && order.orderItems.length > 0) {
+      return order.orderItems
+        .map((item) => {
+          const qty = item.quantity > 1 ? ` x${item.quantity}` : "";
+          return `${item.productName}${qty}`;
+        })
+        .join(", ");
+    }
+
+    return order.product?.name || "-";
+  };
+
   const getServiceName = (order: OrderData) => {
+    if (order.orderItems && order.orderItems.length > 0) {
+      const services = [
+        ...new Set(
+          order.orderItems.map((item) => {
+            return serviceLabels[item.productType] || item.productType;
+          })
+        ),
+      ];
+
+      return services.length === 1 ? services[0] : "Custom Order";
+    }
+
     const key = order.product?.type || order.product?.category || "";
 
     return serviceLabels[key] || key || "Order";
   };
 
-  const getItemName = (order: OrderData) => {
-    return order.product?.name || "-";
-  };
+  // const getItemName = (order: OrderData) => {
+  //   return order.product?.name || "-";
+  // };
 
   const allOrders = useMemo(() => {
     return users.flatMap((user) =>
@@ -631,7 +669,7 @@ export default function AdminHandleUserPage() {
                               </div>
 
                               <h3 className="mt-3 text-lg font-bold text-white">
-                                {getServiceName(order)} — {getItemName(order)}
+                                {getServiceName(order)} — {getOrderItemsText(order)}
                               </h3>
 
                               <div className="mt-3 grid gap-2 text-sm text-gray-400 md:grid-cols-2 xl:grid-cols-4">
