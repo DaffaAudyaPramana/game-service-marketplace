@@ -185,13 +185,15 @@ export default function AdminHandleUserPage() {
 
   const getServiceName = (order: OrderData) => {
     if (order.orderItems && order.orderItems.length > 0) {
-      const services = [
-        ...new Set(
-          order.orderItems.map((item) => {
-            return serviceLabels[item.productType] || item.productType;
-          })
-        ),
-      ];
+      const services = order.orderItems.reduce<string[]>((acc, item) => {
+        const service = serviceLabels[item.productType] || item.productType;
+
+        if (!acc.includes(service)) {
+          acc.push(service);
+        }
+
+        return acc;
+      }, []);
 
       return services.length === 1 ? services[0] : "Custom Order";
     }

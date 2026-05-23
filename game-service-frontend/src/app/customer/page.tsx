@@ -243,23 +243,25 @@ const getOrderItemsText = (order: CustomerOrder) => {
   return order.product?.name || "-";
 };
 
-const getServiceName = (order: CustomerOrder) => {
-  if (order.orderItems && order.orderItems.length > 0) {
-    const services = [
-      ...new Set(
-        order.orderItems.map((item: OrderItemData) => {
-          return serviceLabels[item.productType] || item.productType;
-        })
-      ),
-    ];
+  const getServiceName = (order: CustomerOrder) => {
+    if (order.orderItems && order.orderItems.length > 0) {
+      const services = order.orderItems.reduce<string[]>((acc, item) => {
+        const service = serviceLabels[item.productType] || item.productType;
 
-    return services.length === 1 ? services[0] : "Custom Order";
-  }
+        if (!acc.includes(service)) {
+          acc.push(service);
+        }
 
-  const key = order.product?.type || order.product?.category || "";
+        return acc;
+      }, []);
 
-  return serviceLabels[key] || key || "Order";
-};
+      return services.length === 1 ? services[0] : "Custom Order";
+    }
+
+    const key = order.product?.type || order.product?.category || "";
+
+    return serviceLabels[key] || key || "Order";
+  };
 
 const getItemName = (order: CustomerOrder) => {
   return order.product?.name || "-";
