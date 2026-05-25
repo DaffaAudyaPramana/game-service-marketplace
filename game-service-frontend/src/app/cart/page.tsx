@@ -35,13 +35,13 @@ export default function CartPage() {
   const total = getCartTotal(items);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-12 text-white">
-      <div className="mx-auto max-w-4xl">
+    <main className="min-h-screen bg-black px-4 py-6 text-white sm:px-6 sm:py-10">
+      <div className="mx-auto w-full max-w-4xl">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-lime-400">
           Keranjang
         </p>
 
-        <h1 className="mt-3 text-3xl font-extrabold">
+        <h1 className="mt-3 text-2xl font-extrabold sm:text-3xl">
           Keranjang Order
         </h1>
 
@@ -66,15 +66,15 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:p-5"
                 >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    <div>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
                       <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
                         {item.service}
                       </p>
 
-                      <h2 className="mt-1 text-xl font-bold">
+                      <h2 className="mt-1 break-words text-lg font-bold sm:text-xl">
                         {item.name}
                       </h2>
 
@@ -83,11 +83,9 @@ export default function CartPage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                       <button
-                        onClick={() =>
-                          handleQuantity(item.id, item.quantity - 1)
-                        }
+                        onClick={() => handleQuantity(item.id, item.quantity - 1)}
                         className="h-10 w-10 rounded-xl border border-white/10 bg-black/40"
                       >
                         -
@@ -98,20 +96,18 @@ export default function CartPage() {
                       </span>
 
                       <button
-                        onClick={() =>
-                          handleQuantity(item.id, item.quantity + 1)
-                        }
+                        onClick={() => handleQuantity(item.id, item.quantity + 1)}
                         className="h-10 w-10 rounded-xl border border-white/10 bg-black/40"
                       >
                         +
                       </button>
 
-                      <button
-                        onClick={() => handleRemove(item.id)}
-                        className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm font-bold text-red-300"
-                      >
-                        Hapus
-                      </button>
+                  <button
+                    onClick={() => handleRemove(item.id)}
+                    className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm font-bold text-red-300"
+                  >
+                    Hapus
+                  </button>
                     </div>
                   </div>
                 </div>
@@ -132,20 +128,20 @@ export default function CartPage() {
                     clearCart();
                     setItems([]);
                   }}
-                  className="rounded-xl border border-white/10 px-5 py-3 font-bold text-white"
+                  className="w-full rounded-xl border border-white/10 px-5 py-3 font-bold text-white"
                 >
                   Kosongkan Keranjang
                 </button>
 
                 <TermsDialog
-                    mode="cart-checkout"
-                    service="cart"
-                    item={`${items.length} item`}
-                    price={formatRupiah(total)}
-                    triggerLabel="Checkout Semua Item"
-                    triggerClassName="rounded-xl bg-lime-400 px-5 py-3 font-bold text-black text-center transition hover:bg-lime-300"
+                  mode="cart-checkout"
+                  service="cart"
+                  item={`${items.length} item`}
+                  price={formatRupiah(total)}
+                  triggerLabel="Checkout Semua Item"
+                  triggerClassName="w-full rounded-xl bg-lime-400 px-5 py-3 font-bold text-black text-center transition hover:bg-lime-300"
                 />
-                </div>
+              </div>
             </div>
           </>
         )}
