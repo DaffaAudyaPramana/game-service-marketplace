@@ -39,7 +39,7 @@ export default function RootLayout({
         <CartToast />
         <Navbar />
 
-        <main className="pt-20 min-h-screen overflow-y-auto">
+        <main className="min-h-screen overflow-y-auto">
           {children}
         </main>
 
