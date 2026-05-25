@@ -104,9 +104,9 @@ export default function LoginPage() {
 };
 
   return (
-    <main className="relative min-h-screen bg-black overflow-hidden">
+    <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6 sm:py-12">
       {notif && (
-      <div className="fixed top-6 left-1/2 z-50 w-[90%] max-w-md -translate-x-1/2 animate-in fade-in slide-in-from-top-4 duration-300">
+      <div className="mx-auto w-full max-w-md">
         <div
           className={`flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-xl ${
             notif.type === "success"
@@ -152,9 +152,9 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
 
       <div className="relative z-10 flex items-center justify-center px-6 py-16 min-h-[90vh]">
-        <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
+        <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-5 shadow-2xl sm:p-8">
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-white mb-3">
+            <h2 className="text-center text-3xl font-extrabold sm:text-5xl">
               Login
             </h2>
 
