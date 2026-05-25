@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
@@ -58,9 +59,21 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <div className="pointer-events-none absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:50px_50px]" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-lime-400/5 via-black/70 to-black" />
+    <main className="relative min-h-[calc(100svh-132px)] overflow-hidden bg-black px-4 py-6 text-white sm:px-6 md:min-h-[calc(100svh-76px)]">
+      {/* BACKGROUND IMAGE - SAMA SEPERTI LOGIN */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <Image
+          src="/gta-bg.png"
+          alt="GTA Background"
+          fill
+          priority
+          className="scale-110 object-cover opacity-25 blur-sm"
+        />
+      </div>
+
+    {/* DARK OVERLAY */}
+    <div className="pointer-events-none absolute inset-0 z-[1] bg-black/70" />
+    <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-b from-black/30 via-black/70 to-black" />
 
       {notif && (
         <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-md -translate-x-1/2">
@@ -93,22 +106,22 @@ export default function ForgotPasswordPage() {
         </div>
       )}
 
-      <div className="relative z-10 mx-auto max-w-md">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-190px)] w-full max-w-md flex-col justify-center py-8 md:min-h-[calc(100svh-140px)]">
         <Link
           href="/login"
-          className="mb-6 inline-flex items-center gap-2 text-sm text-gray-400 transition hover:text-lime-400"
+          className="mb-5 inline-flex w-fit items-center gap-2 text-sm text-gray-400 transition hover:text-lime-400"
         >
           <ArrowLeft size={16} />
           Kembali ke Login
         </Link>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl sm:p-8">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-lime-400/10 text-lime-400">
               <Mail size={28} />
             </div>
 
-            <h1 className="text-3xl font-extrabold">
+            <h1 className="text-3xl font-extrabold sm:text-4xl">
               Lupa Password
             </h1>
 
