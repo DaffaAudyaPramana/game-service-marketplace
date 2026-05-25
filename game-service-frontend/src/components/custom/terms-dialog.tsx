@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { addToCart } from "@/lib/cart";
+import { addToCart, getCart } from "@/lib/cart";
 
 interface Props {
   service: string;
@@ -34,15 +34,92 @@ export default function TermsDialog({
   const whatsappAdmin1 = "6282227529815";
   const whatsappAdmin2 = "6282296221189";
 
-  const whatsappMessage = encodeURIComponent(
-    `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+  const serviceLabels: Record<string, string> = {
+    money: "Money Heist",
+    rank: "Rank Boost",
+    unlock: "Unlock Service",
+    paket: "Paket GTA V",
+    bundle: "Bundle",
+    cart: "Keranjang",
+  };
 
-  Service: ${service}
+  const formatCartPrice = (value: string | number) => {
+    if (typeof value === "number") {
+      return `Rp ${value.toLocaleString("id-ID")}`;
+    }
+
+    if (String(value).toLowerCase().includes("rp")) {
+      return String(value);
+    }
+
+    const numericValue = Number(String(value).replace(/\D/g, ""));
+
+    if (!numericValue || Number.isNaN(numericValue)) {
+      return String(value || "-");
+    }
+
+    return `Rp ${numericValue.toLocaleString("id-ID")}`;
+  };
+
+  const getWhatsappOrderText = () => {
+    if (dialogMode !== "cart-checkout") {
+      return `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+
+  Service: ${serviceLabels[service] || service}
   Item: ${item}
   Harga: ${price}
 
-  Mohon dibantu proses ordernya.`
-  );
+  Mohon dibantu proses ordernya.`;
+    }
+
+    const cartItems = getCart();
+
+    if (!cartItems.length) {
+      return `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+
+  Item: Keranjang kosong
+
+  Mohon dibantu proses ordernya.`;
+    }
+
+    if (cartItems.length === 1) {
+      const cartItem = cartItems[0];
+      const itemTotal =
+        Number(String(cartItem.price).replace(/\D/g, "")) *
+        Number(cartItem.quantity || 1);
+
+      return `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+
+  Service: ${serviceLabels[cartItem.service] || cartItem.service}
+  Item: ${cartItem.name}${cartItem.quantity > 1 ? ` x${cartItem.quantity}` : ""}
+  Harga: ${formatCartPrice(itemTotal)}
+
+  Mohon dibantu proses ordernya.`;
+    }
+
+    const itemsText = cartItems
+      .map((cartItem, index) => {
+        const itemTotal =
+          Number(String(cartItem.price).replace(/\D/g, "")) *
+          Number(cartItem.quantity || 1);
+
+        return `${index + 1}. ${
+          serviceLabels[cartItem.service] || cartItem.service
+        } - ${cartItem.name} x${cartItem.quantity} - ${formatCartPrice(itemTotal)}`;
+      })
+      .join("\n");
+
+    return `Halo admin HyperIndoStore, saya ingin order via WhatsApp.
+
+  Detail Order:
+  ${itemsText}
+
+  Total: ${price}
+
+  Mohon dibantu proses ordernya.`;
+  };
+
+  const whatsappMessage = encodeURIComponent(getWhatsappOrderText());
 
   const whatsappAdmin1Url = `https://wa.me/${whatsappAdmin1}?text=${whatsappMessage}`;
   const whatsappAdmin2Url = `https://wa.me/${whatsappAdmin2}?text=${whatsappMessage}`;
