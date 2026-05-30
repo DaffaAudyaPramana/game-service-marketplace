@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { gtaServiceDetail } from "@/lib/gta-service-detail";
 import { notFound } from "next/navigation";
 import TermsDialog from "@/components/custom/terms-dialog";
@@ -6,6 +7,27 @@ import Link from "next/link";
 interface Props {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
+  const data =
+    gtaServiceDetail[params.slug as keyof typeof gtaServiceDetail];
+
+  if (!data) {
+    return {
+      title: "Layanan Tidak Ditemukan | HyperIndo Store",
+    };
+  }
+
+  return {
+    title: `${data.title} | HyperIndo Store`,
+    description: `Pesan ${data.title} GTA Online di HyperIndo Store. Proses cepat, aman, dan terpercaya dengan harga terjangkau.`,
+    alternates: {
+      canonical: `/games/gta-v/services/${params.slug}`,
+    },
   };
 }
 
