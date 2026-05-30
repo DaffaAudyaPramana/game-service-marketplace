@@ -1,4 +1,5 @@
 // import { Button } from "@/components/ui/button"
+import CountUp from "../custom/count-up";
 import Link from "next/link";
 
 export default function Hero() {
@@ -48,17 +49,22 @@ export default function Hero() {
       <div className="relative z-10 mt-14 max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 border border-white/10 rounded-xl p-6 bg-black/30 backdrop-blur-sm">
 
         <div>
-          <p className="text-xl font-bold">100+</p>
+          <CountUp
+            end={200}
+            duration={2200}
+            suffix="+"
+            className="text-xl font-bold"
+          />
           <p className="text-gray-400 text-sm">Order selesai</p>
         </div>
 
         <div>
-          <p className="text-xl font-bold">4.5★</p>
+          <p className="text-xl font-bold">4.7★</p>
           <p className="text-gray-400 text-sm">Rating kepuasan</p>
         </div>
 
         <div>
-          <p className="text-xl font-bold">&lt;30 mnt</p>
+          <p className="text-xl font-bold">&lt;45 mnt</p>
           <p className="text-gray-400 text-sm">Rata-rata proses</p>
         </div>
 
