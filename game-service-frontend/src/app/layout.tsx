@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { siteDescription, siteTitle, siteUrl } from "@/lib/seo";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/layout/navbar";
@@ -18,8 +19,18 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "HyperIndoStore",
-  description: "Game Service Marketplace",
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  }
 };
 
 export default function RootLayout({
