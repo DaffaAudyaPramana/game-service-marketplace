@@ -29,6 +29,12 @@ const services = [
     desc: "Bundle hemat + bonus fitur.",
     price: "Mulai dari Rp 89.000",
   },
+  {
+    id: "cherax",
+    title: "Sewa Cherax",
+    desc: "Sewa akses Cherax untuk kebutuhan GTA Online.",
+    price: "Rp 100.000 / 12 Jam",
+  },
 ];
 
 export default function GTAServicesSection() {
