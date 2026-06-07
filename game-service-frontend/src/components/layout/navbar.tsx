@@ -29,6 +29,10 @@ const navLinks = [
     label: "Bundle",
     href: "/games/gta-v/services/paket",
   },
+  {
+    label: "Cherax",
+    href: "/games/gta-v/services/cherax"
+  }
 ];
 
 interface User {
