@@ -184,4 +184,16 @@ export const gtaServiceDetail: Record<string, ServiceDetail> = {
       },
     ],
   },
+  cherax: {
+    title: "Sewa Cherax",
+    description:
+      "Layanan sewa Cherax untuk kebutuhan GTA Online. Cocok untuk kamu yang ingin menggunakan akses Cherax dalam durasi tertentu tanpa membeli lisensi penuh. Proses order dilakukan seperti layanan lainnya dan dibantu oleh operator. PC Only.",
+    items: [
+      {
+        label: "Sewa Cherax 12 Jam",
+        price: "Rp 100.000",
+        result: "Durasi akses 12 jam",
+      },
+    ],
+  },
 };
